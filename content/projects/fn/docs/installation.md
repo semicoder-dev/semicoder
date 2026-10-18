@@ -83,3 +83,9 @@ bun run build
 FIA 与 fn 共仓开发，fn 稳定后再独立拆出框架，FIA 独立 npm 继续暂停。`dev` 自动监听框架源码并重建、重启，应用前端保持 HMR；重启会清除未保存状态并使浏览器授权失效。
 
 `framework:check`、`framework:pack`、`framework:verify` 分别检查框架、验证归档和仓库外独立消费。公开 FIA 0.18.0 与当前共仓源码并非同一产物。
+
+## iOS 配套应用状态
+
+iOS 17+ 与独立 macOS 14+ 原生 fn Chat 使用共享聊天核心。聊天端按服务端切换机器人会话，发送纯文字并填写插件请求卡片；现有 fn 桌面应用仍是插件宿主。2026-10-18 聊天 v2 的 iOS **0.2.0（2）** 已完成 Apple 处理并加入既有本人内部 TestFlight 组，配套生产 CloudKit 和本机 fn Beta 已验证，但实际 TestFlight 安装仍提示 App 不可用或无法安装，原因待查，生产手机验收未完成。没有公开 TestFlight 邀请或 Mac 聊天端安装包。
+
+源码核心位于 `clients/apple/`，开发构建需要匹配 CloudKit 容器的签名；TestFlight 与开发环境的数据相互隔离。旧 0.1.0（1）不包含 v2，旧数据保留且不迁移。公开 fn 0.4.5 与 SDK 0.3.5 也不包含聊天能力，普通用户仍按本页安装已发布 macOS 应用。

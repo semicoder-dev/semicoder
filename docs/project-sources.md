@@ -1,5 +1,29 @@
 # 项目资料与发布状态
 
+## 2026-10-18 fn Chat TestFlight 0.2.0（2）
+
+用户在聊天 v2 验收后追加“发布一个新的 TestFlight 版本”。fn `clients/apple/project.yml` 的手机 TestFlight target 独立升级至 0.2.0（2），App Store Connect 仍为 fn Companion；生产归档/IPA 校验通过，12:39 上传成功。Apple 已处理完成，构建 `06dbebb9-52f0-4207-be8b-5e63b9784dc5` 已加入本人内部组（1 组、1 测试员），中文测试说明已保存。生产容器保留原 8 个 schema 类型，仅新增 10 个 v2 类型，静默/机器人提醒订阅与本机 fn Beta 的生产同步均通过。用户确认新构建仍提示 App 不可用或无法安装；ASC 二进制已验证、测试员已接受、免费协议有效，安装根因仍待 Apple 原案例诊断，生产手机业务/通知未验证。结果见 workspace `docs/agent/sessions/2026-10-18-fn-chat-testflight.md`。公开 Mac 0.4.5/build 9 和 SDK 0.3.5 不变。上传时使用保留的工作树；用户随后要求提交，fn 源码固定为 `6649a64ca66f74fba0089797b84c84f99102384a`（`codex/ios-communication`），未推送。
+
+安装页同步准确内测范围，既有公开下载入口不变；官网仅本地文档更新，未推送部署。下方“不上传/不部署生产 schema”是本次追加授权前的开发阶段边界。
+
+本地提交前再次核对安装、插件后端与 FIA 分发说明，修正追加授权前的过时状态。内容校验（32 篇）、文档链接、格式、生产构建和 38 个静态页面检查通过；首次预渲染受沙箱监听端口限制，获准本机监听后重验通过。未改业务代码或执行部署。
+
+## 2026-10-18 聊天 v2（本地未发布）
+
+用户确认重构为 iOS/独立 Mac fn Chat ⇄ CloudKit ⇄ fn 插件宿主 ⇄ 机器人。来源 fn `codex/ios-communication` / 基线 `b915d82` 加本轮工作树；协议 `packages/sdk/src/chat.ts`、`backend/chat/`、`clients/apple/` 和 `chat/acceptance/`。旧未发布 communication/remoteActions 直接替换，无兼容/迁移；旧 v1 与 TestFlight 记录是历史证据。应用、SDK、手机版本不变，官方插件未修改。
+
+安装页和插件后端指南同步纯文字输入、卡片回复、固定会话、共享状态与无公开安装边界；FIA 分发指南同步通用 zone 订阅/退订。对应源码工程/实测状态见 workspace `docs/agent/sessions/2026-10-18-fn-chat.md`。官网仅本地内容修改，无推送部署；本轮不上传 TestFlight 或部署生产 CloudKit schema。下方 2026-10-16 授权与结果仅指当时 v1。
+
+## 2026-10-16 fn TestFlight 内部测试准备
+
+用户追加授权生产 CloudKit schema、内部 TestFlight 和独立 Mac Beta。手机身份 com.semicoder.fn.ios、Mac com.semicoder.fn.beta，新生产容器与开发容器隔离；App Store Connect 记录为 fn Companion。生产记录/订阅部署及 Mac Beta 实际同步通过，手机 0.1.0 (1) 已处理完成并加入本人内部测试组，尚未确认 TestFlight 安装。仅本人内部群组，自动分发关闭，无公开邀请或 App Store 上架。Mac Beta 本地签名通过，公证因 fn-notary 凭据缺失未完成。来源 fn/ios/TESTFLIGHT.md、communication/cloudkit-schema.ckdb。官网仅同步状态，公开下载入口不改，未推送部署。
+
+## 2026-10-16 fn iOS 开发原型（未发布）
+
+fn 基线 `b915d82` 的 `codex/ios-communication` 分支新增双端原型、FIA CloudKit Swift 包/Host/TypeScript 桥与分模式签名。Mac/iPhone 12 双向收发、手机锁屏通知、发送端提醒与 Mac 重启补拉通过；独立 FIA 导出消费及签名 Host 条件读写通过。业务协议、双端 SQLite、SDK 后端身份绑定、远程执行与双端收件箱已接入开发版；原型真实断网恢复通过，业务版真机批准/问答/定向回声与手机结果提醒通过。整体边界、汇总提醒显示与四设备验收未完成，不可发布。
+
+安装指南与 FIA 分发指南追加未发布边界，插件后端指南补充开发分支通信契约，不改公开下载入口。公开 SDK 0.3.5/FIA npm 0.18.0 不包含这些本地能力。用户确认暂无额外 Mac/iPhone，四设备矩阵明确未验证。本次官网仅本地文档变更，不推送或部署。
+
 ## 2026-10-16 网络工具发行
 
 - agent-webtool `v0.8.1` 固定 `150275a6da3b7eac4777259da8b4a80370f7f749`。三平台 CI 38822757505、候选 38822756040、OIDC 38822896341 成功；公开归档与候选及正式产物一致，SHA-256 `e623cbac66fc9f43c4d6a8e4d80f77b73ee75d07fb7060fda733a15f0705107f`。Node 20/24 新缓存独立 SDK/CLI/MCP 消费及 provenance 通过。

@@ -52,3 +52,7 @@ FIA_UPDATE_PRIVATE_KEY_FILE=/secure/path/my-app-keys/update-private.pem bunx fia
 - 应用业务依赖需能打包为 JS/TS、静态资源或 WASM；不能把额外原生可执行文件当成普通代码热更新。
 
 安装入门从 [快速开始](/fia/docs/installation) 继续；生产行为以所用包内框架契约为准。
+
+## CloudKit 签名支持（开发中）
+
+fn 共仓源码已增加按开发、预览、正式模式分别配置应用 entitlements 和 provisioning profile 的能力，并提供 macOS/iOS 共用 Swift 传输包及原生 CloudKit 桥，包括 zone 静默变更订阅、按记录类型的创建提醒和幂等退订。业务应用自行维护消息协议、outbox 与同步游标，不能将推送作为可靠事件日志。此功能尚未包含于公开 FIA npm 0.18.0；本机 fn Beta 的 Developer ID 签名与生产 CloudKit 同步已通过，公证后分发和安装组合仍未验收。本页现有公开安装与发行路径保持不变。
