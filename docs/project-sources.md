@@ -1,5 +1,25 @@
 # 项目资料与发布状态
 
+## 2026-10-18 网络搜索插件与 fn Chat（本地未发布）
+
+用户随后要求提交代码：fn 固定为 `2e315eb`（`codex/agent-loop`）、fn-plugins 为 `0f00988`（`codex/web-search-chat`）、agent-webtool 为 `6411f64`（`codex/search-challenge-detection`）。开发归档与已验收产物的哈希不变，来源记录已关联实际提交。本次仅本地提交，未合并主干、推送、发版或部署。
+
+追加真实反馈修复：fn Agent 每轮提供宿主时钟、归一化空白 site 与 timeRange: all；插件只展示本轮来源，显示具体查询与失败原因，支持无有效结果时放宽过滤或读取公开新闻栏目。agent-webtool `codex/search-challenge-detection` 识别百度/DuckDuckGo 人机验证页，保留现有 engine error 契约；110 项测试和最终归档的独立 SDK/CLI/MCP 消费通过。fn 开发分支暂时使用固定 vendor 归档及哈希，公开 npm 0.8.1 与默认安装路径不变；发行前需切回已公开验收的依赖。插件指南与 agent-webtool SDK 页同步未发布边界，无部署。
+
+追加验收：fn 最终 142 项应用测试、类型检查、构建，插件 13 项测试、归档和模拟 ChatRunner/Agent 集成通过。开发宿主 GPT-6-Luna 已真实完成天气查询，新闻在搜索验证页受阻后换到公开栏目并读取两篇当日报道生成摘要；浏览器验证原新闻轮不再显示旧天气来源。手机再次发送及推送未在本轮复验，不能据此宣称完整发行验收。
+
+用户要求基于 Agent loop 实现搜索总结插件并对接 fn Chat。源码为 fn-plugins `codex/web-search-chat` 的 `plugins/web-search/`，消费仓内 `vendor/agent-sdk.tgz` 固定开发归档（来源 fn `codex/agent-loop`，SHA-256 见 `vendor/agent-sdk.json`）。根包和两个已发布插件仍使用公开 SDK 0.3.4，正式市场没有增加未公开条目。
+
+插件指南补充页面流程、Chat 模型卡片/追问/命令与兼容范围。宿主 Agent 和 Chat 协议无需新增改动；使用前需兼容开发宿主及已配置的 Chat v2 同步。本地模拟完整链路及浏览器验收不等于真实账号或手机联机验收。公开版本、安装入口和官网部署状态不变。
+
+插件 check、12 项测试、打包、索引检查和仓库外冻结安装/构建通过；最终归档完成宿主 ChatRunner/Agent 模拟集成，隔离打包应用的桌面与窄窗口页面通过。本站内容生成、32 篇内容与链接、生产构建和 38 个静态页面检查通过；没有推送或部署。
+
+## 2026-10-18 fn 宿主 Agent（本地未发布）
+
+来源 fn `codex/agent-loop`，基线 `6649a64`，后续与搜索修复一起提交为 `2e315eb`；契约 `packages/sdk/src/agent.ts`，实现 `backend/agent/`、`shared/api.ts` 和 `docs/agents.md`。新增结构化消息、持久 turn/step/工具事件、多步循环、插件工具、网络工具及取消/重启恢复。沿用 Pi 和独立 ChatGPT 登录，参考 Harness 分层而不引入其运行时依赖。
+
+前后端 SDK 与自动化页同步开发边界；公开 fn 0.4.5/build 9、SDK 0.3.5、官网默认安装入口不变。fn 完整检查、140 项应用测试、构建、隔离打包启动/退出及 SDK 归档独立消费通过；模型协议使用模拟流，真实账号/搜索质量未在本轮验收。官网内容生成、32 篇内容与链接检查、生产构建和 38 个静态页面检查通过；仅本地更新，未推送部署。
+
 ## 2026-10-18 fn Chat TestFlight 0.2.0（2）
 
 用户在聊天 v2 验收后追加“发布一个新的 TestFlight 版本”。fn `clients/apple/project.yml` 的手机 TestFlight target 独立升级至 0.2.0（2），App Store Connect 仍为 fn Companion；生产归档/IPA 校验通过，12:39 上传成功。Apple 已处理完成，构建 `06dbebb9-52f0-4207-be8b-5e63b9784dc5` 已加入本人内部组（1 组、1 测试员），中文测试说明已保存。生产容器保留原 8 个 schema 类型，仅新增 10 个 v2 类型，静默/机器人提醒订阅与本机 fn Beta 的生产同步均通过。用户确认新构建仍提示 App 不可用或无法安装；ASC 二进制已验证、测试员已接受、免费协议有效，安装根因仍待 Apple 原案例诊断，生产手机业务/通知未验证。结果见 workspace `docs/agent/sessions/2026-10-18-fn-chat-testflight.md`。公开 Mac 0.4.5/build 9 和 SDK 0.3.5 不变。上传时使用保留的工作树；用户随后要求提交，fn 源码固定为 `6649a64ca66f74fba0089797b84c84f99102384a`（`codex/ios-communication`），未推送。

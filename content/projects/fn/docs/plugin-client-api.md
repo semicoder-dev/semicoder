@@ -309,3 +309,17 @@ const page = await client.web.fetch(
 搜索返回 text、results、engines；检查各引擎状态，区分无结果和失败。支持 baidu、wechat、toutiao、duckduckgo、limit（1–30）、timeRange、site、timeoutMs（默认每引擎 3000 毫秒）。抓取返回正文 text、url、finalUrl、status、contentType、title、format、truncated 和可选 redirect。HTTP 错误页和跨域跳转有明确元数据，不能只凭 Promise 成功判断页面正常。支持 markdown/text/html，maxBytes 默认 100000，timeoutMs 默认每请求 30000 毫秒；HTTP 地址会升级 HTTPS，不执行页面脚本或读取浏览器登录态。
 
 宿主最多并发 8 项，单任务总时限 120 秒，完整序列化结果最多 256 KiB（独立于 maxBytes，包含元数据与 JSON 转义）。错误包含 code；主动取消为 AbortError。终态只在内存保留最多 32 条、10 分钟，应用重启清空。需要保存结果时由插件自行存储。网络任务运行时会阻止对应插件停用、更新、卸载和应用更新，退出会取消在途请求。
+
+## Agent 会话（开发分支，未发布）
+
+开发分支新增 `client.agents`，公开 fn 0.4.5 / SDK 0.3.5 尚不包含此接口。请使用同一次构建生成的开发宿主与 SDK 快照，默认安装入口仍指向公开版本。
+
+`tools()` 发现可选工具；`create({modelId,system,tools,maxSteps,timeoutMs})` 创建会话；`send(sessionId,text)` 开始一轮多步模型与工具调用并立即返回。宿主提供 `web_search`、`web_fetch`，插件也可显式声明自己的工具；默认不启用工具。
+
+`get(sessionId)` 返回会话及实时 partial 消息，`events(sessionId,after)` 分页读取持久事件，`list()` 返回会话摘要。先订阅 `onChange`，再启动并立即读取；通过 `client.onReconnect` 重读快照及按 seq 补历史，不自动重发不确定的 create/send。消息由文本、推理和工具调用块组成，工具结果保留来源；`deriveAgentMessages` 从 `@semicoder/fn-sdk/agent` 导出，用于投影已结算的模型历史。
+
+revision 用于同一连接内过滤乱序快照。重连时重置实时 revision 基准、忽略旧连接未返回的读取；硬崩溃可能丢失实时修订号，跨重启以持久 seq 补历史。
+
+`cancel(sessionId)` 请求取消，状态在实际执行结束前保持 cancelling；`remove(sessionId)` 删除空闲会话及历史。页面卸载只清理订阅，不取消后台任务。重启将未结束任务标记 interrupted，不重放工具。工具副作用不会自动回滚。
+
+每轮默认最多 8 步、10 分钟，可配置 1–32 步、1 秒–30 分钟；与文本生成共享 8 个模型任务槽。每插件最多保存 100 个会话，用户消息最多 16,000 字符；事件每页最多 100 条 / 256 KiB，模型历史最大 384 KiB，超限提示新建会话，不静默裁剪。工具输出上限为 96 KiB，读取长网页时应缩小 maxBytes。该能力尚未提供自动上下文压缩、后台调度或搜索总结成品插件。

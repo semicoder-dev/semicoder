@@ -86,3 +86,9 @@ bun run agent call web.cancel --json '{"pluginId":"实际插件 ID","taskId":"�
 启动立即返回 WebTask；状态为 running/completed/failed/cancelled，result 为搜索或抓取结果，error 包含 code 和 message。web.changed 只通知 pluginId、id、kind、status，先订阅再启动，并在通知及重连后重读 web.get。连接中断时不要自动重发启动请求。
 
 任务只存内存，完成后最多保留 32 条/10 分钟；每次调用独立引用编号。限制与结果语义见[插件网络接口](/fn/docs/plugin-client-api#网络工具)。
+
+## Agent 会话（开发分支，未发布）
+
+包含 Agent 开发能力的宿主通过现有 CLI 提供 `agents.tools/create/list/get/events/send/cancel/remove`，公共 fn 0.4.5 尚不可使用。全部操作带 pluginId；create 的配置放在 input，send 接受 sessionId/text，events 接受 sessionId/after。通过 `agents.changed` 得到变化通知后重读快照及持久事件。
+
+create 只创建会话，send 开启后台 turn 并立即返回。使用 get 判断终态，events 的 next/hasMore 分页补取历史。cancel 立即请求取消，cancelling 表示执行尚未结束；remove 只能删除空闲会话。失去 send 的回复时先查状态，不自动重复提交；重启后的 interrupted 不会自动重放工具。接口语义与 SDK 的 [Agent 会话](/fn/docs/plugin-client-api#agent-会话开发分支未发布) 一致。

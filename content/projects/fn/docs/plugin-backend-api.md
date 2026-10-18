@@ -176,3 +176,35 @@ agent-webtool 由宿主后端统一提供，插件无需安装或将它打进前
 消息 payload 上限 64 KiB，无附件、逐字流式输出或历史删除；聊天端共享已读、归档与卡片结果。可见提醒仅针对新机器人消息，其余变更只触发同步。系统账号切换严格隔离旧队列与缓存；离线文字保留原目标，不随服务端切换重新路由。
 
 新客户端工程位于 fn 源码 `clients/apple/`，验收插件在 `chat/acceptance/`。完整四设备和系统通知矩阵仍需真机验收。iOS 0.2.0（2）已进入本人内部 TestFlight，生产 schema/订阅已部署，但实际安装仍失败；这不代表公开 SDK 或 Mac 宿主已支持聊天。当前范围和限制见[安装说明](/fn/docs/installation)。
+
+## Agent loop 与自定义工具（开发分支，未发布）
+
+开发宿主新增 `PluginContext.agents`，与前端 agents 方法一致，可创建会话、发送消息、读取状态/持久事件和取消任务。公开 fn 0.4.5 / SDK 0.3.5 不包含此能力；使用同一次开发构建的宿主和 SDK 快照。
+
+工具通过 `BackendPlugin.tools` 声明，`defineTool` 从 runtime 导出。模型只看到会话显式选择的工具，普通 methods 不会自动暴露，也不会调用其他插件的私有工具。
+
+```ts
+import { definePlugin, defineTool, z } from "@semicoder/fn-sdk/runtime";
+
+export default definePlugin({
+  methods: {},
+  tools: {
+    remember: defineTool(
+      "保存调研结论",
+      z.object({ text: z.string().max(2000) }),
+      async (input, ctx) => {
+        ctx.signal.throwIfAborted();
+        await ctx.kv.set("conclusion", input.text);
+        return {
+          content: [{ type: "text", text: "已保存" }],
+          meta: { preview: input.text },
+        };
+      },
+    ),
+  },
+});
+```
+
+工具参数必须为 JSON Schema object。宿主在执行前校验模型生成的 JSON；content 交给模型，meta 仅供展示及历史重建。工具上下文新增 signal、sessionId、callId，仍可使用模型、网络、KV 和显式聊天能力。工具按顺序执行，错误回填为 isError 结果，不自动重试。
+
+工具必须传递并响应 AbortSignal；取消不回滚已发生的副作用。整个 Agent turn 阻止插件停用/更新/卸载、对应模型编辑/移除及应用更新；重启中断不重放。后端 onChange 订阅随插件 dispose 清理。Agent 会话日志与 fn Chat 跨设备聊天是独立协议，插件自行决定何时将结果回复到聊天端。
