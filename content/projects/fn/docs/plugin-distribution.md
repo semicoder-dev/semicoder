@@ -140,3 +140,9 @@ fn call plugins.jobs --json '{}'
 PluginInfo 使用可空 market（marketId/marketURL），InstallJob 包含 operation 和 targetVersion；manifest 为 0.3。官方插件当前独立消费固定公开 `@semicoder/fn-sdk@0.3.4`。仅支持 fn 的包名、清单字段与运行时，不提供旧插件迁移。
 
 来源：SDK 工具：`packages/sdk/plugin.ts`（[v0.4.5 源码](https://github.com/semicoder-dev/fn/tree/v0.4.5)）、市场 schema：`shared/marketplace.ts`（[v0.4.5 源码](https://github.com/semicoder-dev/fn/tree/v0.4.5)）、安装与更新实现：`backend/plugins.ts`（[v0.4.5 源码](https://github.com/semicoder-dev/fn/tree/v0.4.5)）。
+
+## 开发中的 SVG 图标分发
+
+本节尚未公开，需与 [SVG 清单说明](/fn/docs/plugin-manifest#开发中的-svg-插件图标)配套的开发宿主/SDK。构建将 src/icon.svg 复制到 dist/icon.svg，预构建包须携带该文件。PluginInfo 新增可空 iconURL，宿主资源 URL 随安装版本变化。
+
+新市场条目允许可选 iconSvg，值是打包后 SVG 的源码内容（最多 8 KiB），不是清单中的文件路径。候选脚本读取 dist 生成该字段，市场可在安装前显示；索引仍最多 2 MiB，文字 icon 仍作回退。当前官方开发插件统一使用带来源哈希的开发 SDK 归档，正式市场两条公开记录及其 SDK 0.3.4 不变。新版宿主/SDK/插件发布并验证后才更新正式索引，不覆盖已有归档。

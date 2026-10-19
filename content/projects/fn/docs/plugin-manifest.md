@@ -108,3 +108,11 @@ my-notes/
 插件按可信本地代码执行。ID 命名空间、CSS 作用域和前后端入口区分都不是安全沙箱。宿主目前提供文本模型生成、运行记录、JSON KV 和插件方法；没有公共工具注册、预设 agent loop、自建长任务托管或自动升级 API。
 
 来源：SDK 固定版本：`packages/sdk/src`（[v0.4.5 源码](https://github.com/semicoder-dev/fn/tree/v0.4.5)）、宿主插件实现：`backend/plugins.ts`（[v0.4.5 源码](https://github.com/semicoder-dev/fn/tree/v0.4.5)）。
+
+## 开发中的 SVG 插件图标
+
+以下能力尚未发布，公开 fn 0.4.5 / SDK 0.3.5 不支持。需要从包含本次 SVG 改动的开发宿主创建项目并使用其固定 SDK 归档；manifest 兼容版本仍为 0.3。
+
+作者在 `src/icon.svg` 提供单色图标（包含 xmlns/viewBox，最多 8 KiB），保留 `icon` 短文字，并增加 `iconSvg: "dist/icon.svg"`。SDK 检查包内路径和文件大小、自动复制到 dist，打包时验证完整。不要填写远程 URL 或直接写 SVG 源码。
+
+侧栏和应用中心通过图片 mask 使用当前位置的前景色，不保留多色；应用中心保留插件底色。未声明 SVG 或加载失败时显示文字；停用插件仍可显示已验证图标。fn Chat 继续使用文字，不需要客户端或云端协议更新。

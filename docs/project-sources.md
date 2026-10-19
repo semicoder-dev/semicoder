@@ -1,5 +1,13 @@
 # 项目资料与发布状态
 
+## 2026-10-18 插件 SVG 图标（本地开发，未发布）
+
+用户确认由作者随包提供单色 SVG，范围为宿主侧栏、应用中心和市场；fn Chat 保留文字。来源 fn 基线 2e315eb、fn-plugins 基线 0f00988、本站基线 6b84c0a，三个项目均在 codex/plugin-svg-icons 分支。契约入口为 SDK manifest/build/plugin、shared/api.ts 与 shared/marketplace.ts；图标最多 8 KiB，旧文字字段保留，SDK 兼容版本仍为 0.3。
+
+2026-10-19 用户追加要求提交：fn 固定为 `8c44331`，fn-plugins 固定为 `7033210`，SDK 归档元数据已关联实际 fn 提交，并逐字节核对已跟踪文件与生成样式。日常 Dev 的三个插件已重装开发包，现有持久数据核对保留。
+
+三个官方开发插件统一使用带来源哈希的固定开发 SDK；同版本字符串不能代表公开包。清单、分发和插件管理指南只增加未发布段落，公开安装入口、正式市场索引和历史归档不改动。验证结果在 workspace 的 SVG 交付记录维护；本次无升版、推送或部署。
+
 ## 2026-10-18 网络搜索插件与 fn Chat（本地未发布）
 
 用户随后要求提交代码：fn 固定为 `2e315eb`（`codex/agent-loop`）、fn-plugins 为 `0f00988`（`codex/web-search-chat`）、agent-webtool 为 `6411f64`（`codex/search-challenge-detection`）。开发归档与已验收产物的哈希不变，来源记录已关联实际提交。本次仅本地提交，未合并主干、推送、发版或部署。
