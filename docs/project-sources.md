@@ -1,5 +1,21 @@
 # 项目资料与发布状态
 
+## 2026-10-19 本地主干整合
+
+用户确认 TestFlight 安装恢复并要求合回主干。fn Markdown 与 0.2.1（3）发布资料已提交为 `6d5d748` 并快进合入本地 `main`；34 个非文档源码/配置文件与发布归档清单一致。本站配套文档在 `codex/chat-markdown` 提交后合入本地 `main`，保留特性分支。整合包含此前聊天、Agent loop、SVG 及配套指南；其他仓库未合并。未推送或部署，公开下载入口与线上网站版本不变。
+
+## 2026-10-19 fn Chat Markdown TestFlight 0.2.1（3）
+
+用户在 Markdown 开发完成后要求发布 TestFlight。fn `codex/chat-markdown` / `8c44331` 加工作树，`FnPhoneTestFlight` 独立升至 0.2.1（3），仅既有本人内部测试组。生产归档与 IPA 的版本、环境/容器、生产推送、签名和 Markdown 链接核验通过，源码与三个固定依赖 revision 重新核对一致。2026-10-19 22:24:45 上传成功，Apple 随后处理完成，构建 `ce11fa13-3ce2-4289-b05c-913e72fcd3c8` 已加入原“fn 内部测试”组（1 组、1 测试员），最终状态“正在测试”；中文测试说明已保存。用户随后确认收到 Apple 解决问题的邮件，现在可以正常通过 TestFlight 安装，历史安装阻塞已解除；手机 Markdown 交互和生产业务/通知仍待验收。邮件内容未读取，不推断技术根因或案例是否正式关闭。
+
+IPA 1,483,407 字节，SHA-256 `0b0f285b5d46580e527bada6a605ef70219aa4583014929943049e6a7f5bd9b8`；不是 Apple 重签分发包的哈希。仅客户端显示改变，生产 schema、宿主、SDK、Mac 公开版本不变；历史无需迁移。安装与后端指南同步，网站仅本地修改，不推送或部署。详细证据见 workspace `docs/agent/sessions/2026-10-19-fn-chat-testflight.md`。 本站 32 篇内容、文档链接/格式、生产构建和 38 个静态页面检查通过。
+
+## 2026-10-19 fn Chat Markdown（本地未发布）
+
+来源 fn `codex/chat-markdown`，基线 `8c44331` 加工作树；入口 `clients/apple/FnChatUI/ChatMarkdown.swift`（位于 Sources/FnChatUI）、`ChatRootView.swift` 和 `RequestCardView.swift`，精确依赖 MarkdownUI 2.4.1。共享原生渲染覆盖 iOS/Mac 文字消息和卡片文字块，不改变 CloudKit schema、SDK 字段或历史存储；卡片其余字段保持纯文字。安装与后端指南同步未发布范围，既有 TestFlight 0.2.0（2）和公开 fn/SDK 不包含此次修改。
+
+该节记录追加发布授权前的本地开发；随后手机 0.2.1（3）内测分发结果见上节。Mac/SDK 和官网部署边界未扩大。开发验证见 workspace `docs/agent/sessions/2026-10-19-fn-chat-markdown.md`。
+
 ## 2026-10-18 插件 SVG 图标（本地开发，未发布）
 
 用户确认由作者随包提供单色 SVG，范围为宿主侧栏、应用中心和市场；fn Chat 保留文字。来源 fn 基线 2e315eb、fn-plugins 基线 0f00988、本站基线 6b84c0a，三个项目均在 codex/plugin-svg-icons 分支。契约入口为 SDK manifest/build/plugin、shared/api.ts 与 shared/marketplace.ts；图标最多 8 KiB，旧文字字段保留，SDK 兼容版本仍为 0.3。

@@ -86,6 +86,8 @@ FIA 与 fn 共仓开发，fn 稳定后再独立拆出框架，FIA 独立 npm 继
 
 ## iOS 配套应用状态
 
-iOS 17+ 与独立 macOS 14+ 原生 fn Chat 使用共享聊天核心。聊天端按服务端切换机器人会话，发送纯文字并填写插件请求卡片；现有 fn 桌面应用仍是插件宿主。2026-10-18 聊天 v2 的 iOS **0.2.0（2）** 已完成 Apple 处理并加入既有本人内部 TestFlight 组，配套生产 CloudKit 和本机 fn Beta 已验证，但实际 TestFlight 安装仍提示 App 不可用或无法安装，原因待查，生产手机验收未完成。没有公开 TestFlight 邀请或 Mac 聊天端安装包。
+iOS 17+ 与独立 macOS 14+ 原生 fn Chat 使用共享聊天核心。聊天端按服务端切换机器人会话，发送纯文字并填写插件请求卡片；现有 fn 桌面应用仍是插件宿主。2026-10-18 聊天 v2 的 iOS **0.2.0（2）** 已完成 Apple 处理并加入既有本人内部 TestFlight 组，配套生产 CloudKit 和本机 fn Beta 已验证，当时 TestFlight 安装受阻；2026-10-19 用户确认 Apple 处理后已能正常通过 TestFlight 安装，生产手机业务/通知仍待验收。没有公开 TestFlight 邀请或 Mac 聊天端安装包。
+
+2026-10-19 追加 Markdown：iOS/Mac 消息正文和请求卡片文字块支持标题、列表、引用、代码、表格和链接，可复制代码或原文。包含此次更新的 iOS **0.2.1（3）** 已完成 Apple 处理，并加入既有本人内部 TestFlight 组，状态“正在测试”，TestFlight 安装已由用户确认恢复正常，手机 Markdown 交互仍待实测；旧 0.2.0（2）不含 Markdown。历史数据无需迁移，Mac 聊天端仍需本地构建，公开下载入口不变。
 
 源码核心位于 `clients/apple/`，开发构建需要匹配 CloudKit 容器的签名；TestFlight 与开发环境的数据相互隔离。旧 0.1.0（1）不包含 v2，旧数据保留且不迁移。公开 fn 0.4.5 与 SDK 0.3.5 也不包含聊天能力，普通用户仍按本页安装已发布 macOS 应用。
