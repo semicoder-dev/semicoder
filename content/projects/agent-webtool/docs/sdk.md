@@ -28,7 +28,7 @@ console.log(search.engines);
 
 两种调用的第二参数都支持 `AbortSignal`。取消后应等待请求结束，再处理调用方的会话清理。部分搜索引擎失败时查看 `engines`；全部失败或无结果时，返回状态说明，不应把空列表视为成功找到了资料。
 
-尚未发布的开发修复会将百度安全验证页、DuckDuckGo 验证码表单识别为 `status: "error"`、`ok: false`，错误说明要求人机验证；此前可能误报为正常的零结果。SDK、CLI 和 MCP 共用该识别，不尝试绕过验证。公开 npm 0.8.1 尚不包含此修复，默认安装版本保持不变。
+0.8.2 将百度安全验证页、DuckDuckGo 验证码表单识别为 `status: "error"`、`ok: false`，错误说明要求人机验证；此前可能误报为正常的零结果。SDK、CLI 和 MCP 共用该识别，不尝试绕过验证。0.8.1 及更早版本不包含此修复，升级至 0.8.2 即可使用。
 
 0.8.0 的协议升级仅改变 MCP 包装层；上述 SDK 返回类型及调用方式保持兼容。MCP 会自动为每个连接创建来源上下文，SDK 仍由调用方按以下方式管理。
 
@@ -63,4 +63,4 @@ const restored = createSourceContext(sources.snapshot());
 
 0.8.1 新增 `webFetchResult`，参数与 webFetch 相同，返回 FetchResponse：url、finalUrl、status、contentType、title、format、text、truncated 及可选 redirect（from/to/status）。HTTP 错误页保留状态和正文，跨域跳转显式返回；网络错误、超时、取消和超限仍拒绝 Promise。
 
-webFetch 继续返回字符串，CLI/MCP 返回结构不变。结构化结果与正文共享缓存，缓存命中保留元数据且不共享可修改对象。10 MiB HTTP 响应上限改为流式检查；取消和超时覆盖 DNS 等待、重定向与正文读取。fn 通过精确 npm 0.8.1 消费这项服务端能力；浏览器端不直接导入 agent-webtool。
+webFetch 继续返回字符串，CLI/MCP 返回结构不变。结构化结果与正文共享缓存，缓存命中保留元数据且不共享可修改对象。10 MiB HTTP 响应上限改为流式检查；取消和超时覆盖 DNS 等待、重定向与正文读取。fn 0.5 通过精确 npm 0.8.2 消费这项服务端能力；浏览器端不直接导入 agent-webtool。

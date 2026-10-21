@@ -25,6 +25,10 @@
     {
       "title": "自动化",
       "items": ["docs-fn-automation"]
+    },
+    {
+      "title": "架构",
+      "items": ["docs-fn-cordis-preview"]
     }
   ]
 }

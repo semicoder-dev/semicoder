@@ -2,93 +2,33 @@
 id: "docs-fn-automation"
 slug: "automation"
 title: "CLI 与自动化"
-description: "查询模型、安装插件、调用插件方法，并跟踪任务结果。"
-date: "2026-10-04"
+description: "fn 0.5 的应用 CLI、分页查询和持久会话自动化。"
+date: "2026-10-21"
 ---
 
-> 适用于 fn 0.4.5 / SDK 0.3.5，manifest 为 0.3。先按[安装指南](/fn/docs/installation)安装 fn；旧名称插件和旧应用数据不迁移。
+适用于 fn 0.5.0。使用随宿主提供的 FIA CLI，不启动额外后台服务器。开发命令前缀为 `fn-dev`，预览为 `fn-preview`，正式版为 `fn`。
 
-## 选择正确实例
+## 查询状态
 
-开发时，在已启动 `bun run dev` 的项目目录使用 `bun run agent`。安装应用后从应用菜单安装 CLI，再使用 `fn`。这两个实例的数据独立，命令不会自动共享模型配置。
-
-```bash
-bun run agent schema --json
-bun run agent call models.list --json '{}'
-bun run agent call plugins.list --json '{}'
+```sh
+fn call apps.list --json '{}'
+fn call connections.list --json '{"offset":0,"limit":50}'
+fn call models.saved --json '{"offset":0,"limit":50}'
+fn call sessions.list --json '{"offset":0,"limit":50}'
 ```
 
-动态插件方法的名称、描述和输入 JSON Schema 来自 `plugins.list` 的 `methods`。先发现当前已安装插件，不假设任意插件都存在。
+真实操作及参数以宿主命令帮助和共享 API 为准。列表可能分页，需处理 `nextOffset/hasMore`；模型目录和标题等无 Agent 调用也必须显式选择连接。业务方法通过 `apps.invoke` 调用，必须提供应用 ID、方法名和输入。
 
-## 调用译文插件
+## 页面与任务
 
-先从市场安装译文，再从 `models.list` 选出实际可用的模型 ID，再替换下面的占位值：
-
-```bash
-bun run agent call plugins.invoke --json '{"pluginId":"translate","method":"translate","input":{"text":"Hello","target":"简体中文","modelId":"实际模型 ID"}}'
-bun run agent call runs.list --json '{"pluginId":"translate"}'
+```sh
+fn open --browser
+fn application create ./my-app
+fn application check ./my-app
+fn application build ./my-app
+fn application pack ./my-app
 ```
 
-生成返回运行记录，不等于已经完成。列表显示最近 30 次运行摘要，输入输出最多各 300 字符；使用实际 `runId` 获取完整状态：
+浏览器授权属于当前实例，后台重启后重新连接。页面断开不停止后台任务，任务取消和审批回复均使用显式命令。不要将临时流式事件当作唯一历史；重连从持久 Session 投影和游标补齐。
 
-```bash
-bun run agent call runs.get --json '{"pluginId":"translate","runId":"实际运行 ID"}'
-bun run agent call runs.cancel --json '{"pluginId":"translate","runId":"实际运行 ID"}'
-```
-
-## 管理插件与外观
-
-```bash
-bun run agent call plugins.install --json '{"source":"/absolute/path/plugin.tgz"}'
-bun run agent call plugins.jobs --json '{}'
-bun run agent call appearance.set --json '{"theme":"dark"}'
-```
-
-安装需轮询任务终态；停用和卸载操作可能因任务忙碌而被拒绝。模型和安装事件不保留历史，订阅后或重连后重新读取状态。
-
-## 交给外部 agent
-
-安装生产 CLI 后，可运行 `fn skill install` 安装随应用生成的使用说明。FIA 提供发现与调用机制，fn 提供业务方法；这不表示应用内已经实现通用 agent loop。
-
-需要用脚本组合多次调用时，参阅 [FIA 的脚本说明](/fia/docs/automation)。
-
-## 插件开发命令（0.2.0 起）
-
-fn 0.2.0 增加 `fn plugin create/check/build/pack`，开发入口为 `bun run agent plugin …`，需要开发者 Bun >=1.4.2；v0.1.0 不支持；所有子命令提供 --help/--json。命令沿用实例连接、进程取消和更新占用规则，保留调用目录、参数和退出码。插件安装仍走已有 plugins.install。用法与版本边界见 [插件开发](/fn/docs/plugin-development)。
-
-## 市场与更新（0.4.2 起）
-
-`marketplaces.list/add/update/remove/refresh/catalog` 管理来源和分页目录；`plugins.installFromMarket` 安装选定来源，`plugins.update` 更新原市场版本或显式手动来源。安装任务增加 `operation/targetVersion`，插件信息使用可空 `market`。`plugins.installExample` 和 `builtin` 已删除，无旧接口兼容层。
-
-```bash
-bun run agent call marketplaces.refresh --json '{}'
-bun run agent call marketplaces.catalog --json '{"offset":0,"limit":20}'
-bun run agent call plugins.installFromMarket --json '{"marketId":"official","pluginId":"translate"}'
-bun run agent call plugins.jobs --json '{}'
-bun run agent call plugins.update --json '{"pluginId":"translate"}'
-```
-
-市场事件只通知变化，订阅和重连后重新读取快照；安装任务接受不表示成功，须检查终态。
-
-插件内调用宿主能力使用[前端 API](/fn/docs/plugin-client-api)，自定义业务方法使用[后端 API](/fn/docs/plugin-backend-api)。这些接口与本页的宿主管理 CLI 分开；制作市场索引见[构建与分发](/fn/docs/plugin-distribution)。
-
-## 网络任务
-
-fn 0.4.5 起提供网络任务。先用 plugins.list 选择实际存在且启用的插件 ID，然后调用：
-
-```bash
-bun run agent call web.search --json '{"pluginId":"实际插件 ID","input":{"query":"Bun runtime","limit":5}}'
-bun run agent call web.fetch --json '{"pluginId":"实际插件 ID","input":{"url":"https://example.com","maxBytes":100000}}'
-bun run agent call web.get --json '{"pluginId":"实际插件 ID","taskId":"启动返回的 id"}'
-bun run agent call web.cancel --json '{"pluginId":"实际插件 ID","taskId":"启动返回的 id"}'
-```
-
-启动立即返回 WebTask；状态为 running/completed/failed/cancelled，result 为搜索或抓取结果，error 包含 code 和 message。web.changed 只通知 pluginId、id、kind、status，先订阅再启动，并在通知及重连后重读 web.get。连接中断时不要自动重发启动请求。
-
-任务只存内存，完成后最多保留 32 条/10 分钟；每次调用独立引用编号。限制与结果语义见[插件网络接口](/fn/docs/plugin-client-api#网络工具)。
-
-## Agent 会话（开发分支，未发布）
-
-包含 Agent 开发能力的宿主通过现有 CLI 提供 `agents.tools/create/list/get/events/send/cancel/remove`，公共 fn 0.4.5 尚不可使用。全部操作带 pluginId；create 的配置放在 input，send 接受 sessionId/text，events 接受 sessionId/after。通过 `agents.changed` 得到变化通知后重读快照及持久事件。
-
-create 只创建会话，send 开启后台 turn 并立即返回。使用 get 判断终态，events 的 next/hasMore 分页补取历史。cancel 立即请求取消，cancelling 表示执行尚未结束；remove 只能删除空闲会话。失去 send 的回复时先查状态，不自动重复提交；重启后的 interrupted 不会自动重放工具。接口语义与 SDK 的 [Agent 会话](/fn/docs/plugin-client-api#agent-会话开发分支未发布) 一致。
+旧 `plugins.*`、`runs.*` 和 `plugin create` 属于旧架构，不适用于新宿主。新数据目录独立，脚本不应直接操作旧数据库或复制旧凭证。

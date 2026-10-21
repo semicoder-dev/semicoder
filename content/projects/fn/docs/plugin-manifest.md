@@ -2,117 +2,48 @@
 id: "docs-fn-plugin-manifest"
 slug: "plugin-manifest"
 title: "插件结构与生命周期"
-description: "完整 manifest 字段、SDK 导入入口、页面和后端生命周期。"
-date: "2026-10-16"
+description: "普通 npm 包、Cordis 入口、精确共享依赖和应用图标。"
+date: "2026-10-21"
 ---
 
-> 适用于 fn 0.4.5 / SDK 0.3.5，manifest 为 0.3。先按[安装指南](/fn/docs/installation)安装 fn；旧名称插件和旧应用数据不迁移。
+适用于 fn 0.5.0 / SDK 0.4.0。插件沿用 npm 字段；`fn` 元数据只描述应用身份和展示，不再使用旧 `frontend/backend/sdkVersion` 清单。
 
-本页适用于 **fn 0.4.5 / SDK 0.3.5**。新项目先按[入门教程](/fn/docs/plugin-development)生成，再修改业务源码。
-
-## 项目结构
-
-```text
-my-notes/
-  package.json          # 包身份、版本、fn 清单
-  tsconfig.json         # TypeScript 配置
-  tools.ts              # SDK check/build/pack 入口
-  vendor/fn-sdk.tgz
-  src/client.tsx        # 默认导出 React 页面
-  src/styles.css        # 只导入 SDK tailwind.css
-  src/page.module.css   # 可选局部样式
-  src/assets/           # 被源码引用的图片等资源
-  src/backend.ts        # 可选，默认导出 definePlugin 对象
-  dist/                 # 构建生成，不手工维护
-```
-
-保存源码、锁文件和 vendor 归档。CLI 打包会收集清单及完整 dist；Git 来源安装则需自行提交预构建 dist。宿主不替插件执行构建或安装脚本。
-
-## package.json 与 manifest
+## 包结构
 
 ```json
 {
-  "name": "fn-plugin-my-notes",
+  "name": "@example/my-app",
   "version": "0.1.0",
   "type": "module",
+  "files": ["src", "dist"],
+  "exports": { ".": "./src/index.ts", "./client": "./dist/client.js" },
   "fn": {
     "schemaVersion": 1,
-    "id": "my-notes",
-    "name": "我的笔记",
-    "description": "把想法保存到本机。",
+    "id": "my-app",
+    "name": "我的应用",
+    "description": "用途说明",
     "icon": "记",
-    "color": "#686868",
-    "sdkVersion": "0.3",
-    "frontend": "dist/client.js",
-    "styles": "dist/client.css",
-    "keepAlive": true
+    "iconSvg": "dist/icon.svg"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "4.0.5",
+    "@semicoder/fn-sdk": "0.4.0",
+    "react": "19.2.7",
+    "react-dom": "19.2.7"
   }
 }
 ```
 
-上面是包元信息片段，合并到 CLI 生成的 package.json，保留依赖与 scripts。包 `name` 用于分发身份，`version` 用于更新比较；市场仅接受 `x.y.z` 稳定版本。
+`exports["."]` 是标准 Cordis 插件，支持 `apply`、`inject`、配置与 effect；Bun 可直接运行 ESM TypeScript。`./client` 可选，无页面服务无需提供。后端源码及所有相对导入必须在包内，浏览器入口必须预构建。
 
-| 字段          | 必填 / 默认 | 约束与含义                                                                        |
-| ------------- | ----------- | --------------------------------------------------------------------------------- |
-| schemaVersion | 必填        | 固定数字 `1`                                                                      |
-| id            | 必填        | 2–64 位，首位小写字母，其余小写字母、数字、连字符；禁止 models、plugins、settings |
-| name          | 必填        | 去除首尾空白后 1–60 字符                                                          |
-| description   | 必填        | 字符串，最多 240 字符                                                             |
-| icon          | 必填        | 字符串长度 1–4，适合一个短字或符号                                                |
-| color         | 必填        | 六位十六进制颜色，如 `#686868`                                                    |
-| sdkVersion    | 必填        | 固定字符串 `"0.3"`，不是 npm 包版本 `0.3.5`                                       |
-| frontend      | 必填        | 固定 `dist/client.js`                                                             |
-| styles        | 必填        | 固定 `dist/client.css`                                                            |
-| backend       | 可选        | 声明时固定 `dist/backend.js`，并存在 `src/backend.ts`                             |
-| keepAlive     | 默认 false  | 是否在当前窗口切页时保留已加载的页面实例                                          |
+## 身份与图标
 
-清单使用 strict schema，未知字段会被拒绝。入口必须在包内，不能通过绝对路径、`..` 或软链接访问包外文件。`PluginManifest` 类型中的入口是 string，但实际安装与检查以这些固定路径的 schema 为准。`manifestSchema` 可从 `@semicoder/fn-sdk/manifest` 导入用于构建工具校验；普通项目由 CLI 自动检查。
+`fn.id` 使用小写字母开头的小写字母、数字和连字符，最长 100 字符；它决定应用数据归属，发布后不要随意改变。`name` 最长 100 字符，`description` 最长 1000 字符。`icon` 可为 1–4 字符。
 
-## SDK 导入入口
+构建器从 `src/icon.svg` 生成 `dist/icon.svg`，上限 8 KiB。宿主以图片或 CSS mask 显示，文字作为回退；不把 SVG 注入 DOM。服务应用也可携带图标。
 
-| 入口                                    | 用途                                                                         |
-| --------------------------------------- | ---------------------------------------------------------------------------- |
-| `@semicoder/fn-sdk/client`              | 前端 createPluginClient                                                      |
-| `@semicoder/fn-sdk/types`               | JSONValue、模型、运行记录、插件与后端类型；使用 import type                  |
-| `@semicoder/fn-sdk/runtime`             | 后端 definePlugin、defineMethod、z；也导出 BackendPlugin、PluginContext 类型 |
-| `@semicoder/fn-sdk/ui`                  | 组件、图标、Size、Tone                                                       |
-| `@semicoder/fn-sdk/manifest`            | 构建工具中的 manifestSchema                                                  |
-| `@semicoder/fn-sdk/plugin`              | create/check/build/pack 工具及 runPluginTool                                 |
-| `@semicoder/fn-sdk/build`               | 低层 buildPlugin                                                             |
-| `@semicoder/fn-sdk/tailwind.css`        | 插件构建时的主题映射                                                         |
-| `@semicoder/fn-sdk/theme.css`、`ui.css` | 宿主加载的全局资源，插件不得导入                                             |
+## 共享依赖
 
-包没有根导出，不能直接从 `@semicoder/fn-sdk` 导入客户端。不要深层导入 `src/`，也不要把后端模块导入前端。
+精确声明实际使用的共享核心 peer dependencies。Agent、Session、工具类型直接从锁定的 `@deepseek-ai/*` 包导入；dsh 家族为 0.2.1-rc.2。运行目录会检查依赖解析，不能携带另一份核心服务。
 
-## 页面生命周期
-
-| 场景                           | 行为                                                                              |
-| ------------------------------ | --------------------------------------------------------------------------------- |
-| 首次打开                       | 按需加载并挂载页面                                                                |
-| keepAlive false 时切走         | 卸载页面，执行 React effect cleanup；返回重新初始化                               |
-| keepAlive true 时切走          | 保留状态、DOM、滚动位置；订阅和 effect 继续运行，页面不参与布局、键盘及无障碍访问 |
-| 隐藏页面的公共浮层             | 关闭并释放键盘、焦点占用，不把焦点送回隐藏触发器                                  |
-| 刷新、重启                     | 丢失未持久化状态；没有自动草稿恢复                                                |
-| 停用、卸载、升级或资源身份变化 | 释放旧实例；重新启用后首次打开再挂载                                              |
-
-短暂断线不等于卸载；重连后重新读取权威状态。keepAlive 没有自动淘汰机制，会持续占用内存。需要长期保存的数据用 KV，而不是仅依赖组件状态。
-
-## 后端生命周期与持久化
-
-前端卸载不等于后端 `dispose`，也不会自动取消模型任务。后端 `activate` 在插件启用加载时执行，`dispose` 负责正常停用、卸载、替换或宿主停止时的清理；进程意外终止不能保证执行清理。详见[后端 API](/fn/docs/plugin-backend-api)。
-
-卸载保留 KV 和运行历史；同 ID 重新安装可继续访问。更新保留启停状态与已存数据，但会丢失未保存草稿。模型运行、方法调用或生命周期切换期间，宿主会阻止冲突的停用、卸载或更新操作。
-
-## 能力边界
-
-插件按可信本地代码执行。ID 命名空间、CSS 作用域和前后端入口区分都不是安全沙箱。宿主目前提供文本模型生成、运行记录、JSON KV 和插件方法；没有公共工具注册、预设 agent loop、自建长任务托管或自动升级 API。
-
-来源：SDK 固定版本：`packages/sdk/src`（[v0.4.5 源码](https://github.com/semicoder-dev/fn/tree/v0.4.5)）、宿主插件实现：`backend/plugins.ts`（[v0.4.5 源码](https://github.com/semicoder-dev/fn/tree/v0.4.5)）。
-
-## 开发中的 SVG 插件图标
-
-以下能力尚未发布，公开 fn 0.4.5 / SDK 0.3.5 不支持。需要从包含本次 SVG 改动的开发宿主创建项目并使用其固定 SDK 归档；manifest 兼容版本仍为 0.3。
-
-作者在 `src/icon.svg` 提供单色图标（包含 xmlns/viewBox，最多 8 KiB），保留 `icon` 短文字，并增加 `iconSvg: "dist/icon.svg"`。SDK 检查包内路径和文件大小、自动复制到 dist，打包时验证完整。不要填写远程 URL 或直接写 SVG 源码。
-
-侧栏和应用中心通过图片 mask 使用当前位置的前景色，不保留多色；应用中心保留插件底色。未声明 SVG 或加载失败时显示文字；停用插件仍可显示已验证图标。fn Chat 继续使用文字，不需要客户端或云端协议更新。
+页面生命周期配置由 `clientApp.page({keepAlive:true,...})` 贡献，不放入旧清单字段。应用是可信本地代码，元数据不构成权限沙箱。

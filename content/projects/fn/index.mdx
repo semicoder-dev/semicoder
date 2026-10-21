@@ -3,47 +3,31 @@ id: "project-fn"
 slug: "fn"
 title: "fn"
 description: "把模型、存储和界面能力组合起来，让每个插件成为一个好用的小应用。"
-date: "2026-10-16"
+date: "2026-10-21"
 tags: ["AI 应用", "插件平台", "macOS"]
-stack: ["FIA", "React", "Pi AI"]
+stack: ["FIA", "Bun", "Cordis", "React"]
 status: "构建中"
 category: "本地插件应用平台"
 featured: true
 start: { "label": "下载与安装", "doc": "docs-fn-installation" }
 ---
 
-## 想做什么，就装一个小应用
+## 应用页面与独立 Chat
 
-翻译一段文字，记录一个想法，或者用模型完成自己的工作流。fn 把共用的模型服务、KV 存储和 UI 组件放在宿主里，插件专注自己的交互与业务。
+fn 把模型连接、Agent、Session、工具、KV 和共享 UI 放在宿主里，让插件专注自己的工作流。侧栏切换应用，每个应用拥有独立页面；同一个后台 Agent 也可由手机 Chat 控制。
 
-侧边栏切换应用，右侧整个空间交给当前插件。插件可以是翻译工具、编辑器或表单，不必长成聊天窗口。
+## 常用能力
 
-## 现在可以做什么
+- 译文、随手记和网络搜索从官方应用中心自主安装，宿主不内置插件。
+- 同一服务商可创建多个独立 API Key 或订阅连接，选择已添加模型创建会话。
+- Agent 支持多轮工具、流式输出、取消和审批；关闭页面不停止任务，重启从持久历史恢复。
+- 手机 Chat 通过同一 iCloud 账号同步命令、会话、已读和自定义表单卡片，离线可重试。
+- 主题、置顶、SVG 图标、页面状态保留、插件管理与应用自动更新由宿主统一提供。
 
-- **译文**：选择自己的模型，流式翻译、取消生成、查看运行历史。
-- **模型服务**：配置 API Key / Token、自定义 OpenAI-compatible 服务，或通过官方浏览器授权连接 ChatGPT 订阅。
-- **应用中心**：安装、启停和卸载可信插件；从官方或自定义市场安装、手动更新插件，保留 npm / Git / 本地归档入口。
-- **窗口置顶**：标题栏图标切换当前原生窗口置顶，便于边看边用。
-- **统一界面**：Base UI 公共组件，浅色、深色与跟随系统；默认、GitHub 和自定义配色，插件继承主题。
-- **页面与数据**：插件可选择保留切页状态，长期数据通过 KV 保存。
-- **开发与自动化**：CLI 创建 notes / model 示例项目，检查、构建和打包独立插件。
+从[下载与安装](/fn/docs/installation)开始，再阅读[第一次使用](/fn/docs/getting-started)。不想配置模型时，可以先安装随手记。
 
-## 从第一次翻译开始
+## 为插件开发者
 
-先按[安装指南](/fn/docs/installation)运行 fn，从「应用中心 → 插件市场」安装译文，再在「设置 → 模型服务」添加模型。打开「译文」，选择模型、输入文字、开始翻译。没有配置时不会产生模拟结果。
+fn 0.5 采用 Bun + 原版 dsh / Cordis。后端可以直接运行 TypeScript，浏览器入口是共享 React 的 Cordis 插件。使用 `fn application create/check/build/pack` 创建和分发普通 npm 应用包。
 
-还不想配置模型，也可以在应用中心安装随手记，先体验插件与本地存储。
-
-## 给插件开发者
-
-插件默认导出 React 页面，通过 `@semicoder/fn-sdk` 获取模型、任务和 KV。后端可注册带输入 schema 的业务方法，UI 组件与 React 运行时由宿主共享。
-
-从 [第一个插件](/fn/docs/plugin-development) 开始，继续阅读[插件结构](/fn/docs/plugin-manifest)、[前端 API](/fn/docs/plugin-client-api)、[后端 API](/fn/docs/plugin-backend-api)、[UI 组件](/fn/docs/plugin-ui)、[浮层与反馈](/fn/docs/plugin-ui-overlays)、[样式主题](/fn/docs/plugin-styling)和[构建分发](/fn/docs/plugin-distribution)。SDK 0.3.5 已公开，CLI 创建的项目自带固定 SDK 快照，可脱离源码 workspace 开发。
-
-## 当前边界
-
-当前发行版本为 **0.4.5 / build 9**，支持 macOS 14+ / Apple Silicon。插件按可信本地代码运行，具有本机代码执行能力，不是强隔离沙箱。用户内容在调用模型时会发送到所选服务商，并非离线 AI。ChatGPT 凭证明文保存在受限本地文件，不再访问钥匙串；fn 使用独立数据目录，不读取或迁移旧应用数据。
-
-fn 0.4.5 / SDK 0.3.5 提供插件网络搜索与抓取接口，参见[网络接口说明](/fn/docs/plugin-client-api#网络工具)。通用工具注册、模型自动工具调用、预设 agent loop、调研应用、其他服务商订阅登录和插件自动升级尚未实现。不要把规划中的能力当成当前功能。
-
-[下载与安装](/fn/docs/installation)提供已验收的完整 DMG、官方插件与源码构建步骤。应用、SDK 和插件分别发行；本次 SDK 为 0.3.5，官方译文与随手记为 0.1.2。底层框架见 [FIA](/fia)。
+从[应用开发](/fn/docs/plugin-development)、[后端 API](/fn/docs/plugin-backend-api)、[前端 API](/fn/docs/plugin-client-api)和[架构](/fn/docs/cordis-preview)了解新契约。SDK 0.4 与旧 SDK、插件和 Chat v2 不兼容，新数据目录不会读取、迁移或删除旧数据。

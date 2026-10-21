@@ -2,324 +2,37 @@
 id: "docs-fn-plugin-client-api"
 slug: "plugin-client-api"
 title: "前端 API"
-description: "模型、运行记录、KV、后端调用，以及事件订阅和重连的完整示例。"
-date: "2026-10-16"
+description: "页面作用域、分页、KV、模型连接和持久 Session 卡片。"
+date: "2026-10-21"
 ---
 
-> 适用于 fn 0.4.5 / SDK 0.3.5，manifest 为 0.3。先按[安装指南](/fn/docs/installation)安装 fn；旧名称插件和旧应用数据不迁移。
+适用于 fn 0.5.0 / SDK 0.4.0。前端通过 Cordis 注入 `clientApp`，不再使用 `createPluginClient`。
 
-本页适用于 **fn 0.4.5 / SDK 0.3.5**。客户端只在宿主加载的插件页面中使用，不是独立网页或服务端 HTTP SDK。
+## 注册页面
 
-## 创建客户端
+从 `@semicoder/fn-sdk/cordis-client` 导入类型扩展，在 `apply(ctx)` 中调用 `ctx.clientApp.page({id,title,component})`。返回注销函数，并随 Cordis 作用域销毁。可设置 `keepAlive:true` 保留当前窗口切页状态；后台换代或窗口关闭后重新挂载，持久内容应写入 KV。
 
-```ts
-import { createPluginClient } from "@semicoder/fn-sdk/client";
-import type { JSONValue, ModelInfo, ModelRequest, ModelRun } from "@semicoder/fn-sdk/types";
+## 业务方法与 KV
 
-const client = createPluginClient("my-model");
-```
+| 接口                      | 用途                               |
+| ------------------------- | ---------------------------------- |
+| `api.context.appId`       | 当前应用 ID                        |
+| `api.invoke(name,args)`   | 调用本应用后端方法，JSON 输入输出  |
+| `api.kv.get(key)`         | 异步读取 JSON，不存在返回 null     |
+| `api.kv.set(key,value)`   | 保存 JSON，单值上限 256 KiB UTF-8  |
+| `api.kv.delete(key)`      | 删除本应用键                       |
+| `api.kv.list()`           | 自动翻页，返回完整键值列表         |
+| `api.call(method,params)` | 调用宿主会话等 RPC                 |
+| `api.list(method,params)` | 自动读取分页 RPC，失败拒绝整次读取 |
 
-参数 `pluginId: string` 应与 manifest 的 id 一致，用于模型任务、KV 和方法调用的归属。`createPluginClient` 同步返回对象；普通网页没有宿主 bridge 时会立即抛出 `This plugin must be opened in fn.`。不要把初始化放在官网或 SSR 环境执行。
+## 模型和会话
 
-## models：模型目录与启动
+`api.list("models.saved")` 获取用户已添加模型；每项包含 `connectionId`、`id` 和名称。按连接筛选后构造 `{connectionId,modelId:item.id}`，由后端创建 Session。`connections.models` 是完整账号目录，不能将预设目录当成账号权限证明。
 
-| 方法                                  | 返回值                 | 行为                                       |
-| ------------------------------------- | ---------------------- | ------------------------------------------ |
-| models.list()                         | `Promise<ModelInfo[]>` | 获取宿主模型配置，不返回密钥               |
-| models.start(input: ModelRequest)     | `Promise<ModelRun>`    | 创建后台运行，返回初始快照，不等待输出完成 |
-| models.onChange(listener: () => void) | () => void             | 订阅模型配置变化，返回解除订阅函数         |
+`api.list("sessions.list", {appId:api.context.appId})` 读取应用会话；`sessions.projection` 提供产品展示，Agent 原始 replay 不直接成为页面协议。关闭页面不停止会话；取消使用显式命令。
 
-`configured` 表示配置可用状态，不代表已验证网络连通性。没有模型时提示前往「设置 → 模型服务」。预设模型从目录退出、账号未连接等情况可能使 configured 为 false；不要静默改用其他服务商。
+直接读取分页 RPC 时处理 `{items,nextOffset,hasMore}`，每页最多 100 项和 512 KiB；不能假定一页包含全部内容。React effect 必须清理订阅和定时器。
 
-## runs：运行记录与取消
+## 卡片
 
-| 方法                                | 返回值                | 行为                                                           |
-| ----------------------------------- | --------------------- | -------------------------------------------------------------- |
-| runs.list()                         | `Promise<ModelRun[]>` | 当前插件最近 30 条摘要，从新到旧；input/output 各截到 300 字符 |
-| runs.get(runId: string)             | `Promise<ModelRun>`   | 当前插件指定运行的完整快照                                     |
-| runs.cancel(runId: string)          | `Promise<ModelRun>`   | 取消运行并等待终态保存；已结束的运行返回当前状态               |
-| runs.onChange(listener: () => void) | () => void            | 仅通知当前插件运行有变化，不传文本增量                         |
-
-变化通知没有历史重放。**先订阅，再读取；重连后重新读取；卸载时解除订阅。** 同一运行的多个异步读取可能乱序，使用 `revision` 避免旧结果覆盖新结果。启动返回后再 get 一次，补齐启动期间已经发生的变化。
-
-## kv：JSON 持久化
-
-| 方法                                  | 返回值                       | 行为                                                      |
-| ------------------------------------- | ---------------------------- | --------------------------------------------------------- |
-| kv.get(key: string)                   | `Promise<JSONValue 或 null>` | 不存在返回 null；显式保存 null 与不存在无法仅凭返回值区分 |
-| kv.set(key: string, value: JSONValue) | `Promise<null>`              | 等待写入完成，单值序列化后的 UTF-8 最多 64 KiB            |
-| kv.delete(key: string)                | `Promise<null>`              | 等待删除完成                                              |
-
-前端 key 长度 1–200。`JSONValue` 包括 null、boolean、number、string、数组及字符串键对象，递归成员也必须为 JSON；不支持 undefined、Date 实例、函数、BigInt 或循环引用。中文字符占多个字节，字符计数不等于 64 KiB 上限。
-
-KV 按插件 ID 存在宿主数据目录，卸载保留；无跨设备同步或 KV 变化订阅 API。完整读写与错误处理见[笔记示例](/fn/docs/plugin-development#创建随手记插件)。
-
-## invoke 与重连
-
-| 方法                                                    | 返回值       | 行为                              |
-| ------------------------------------------------------- | ------------ | --------------------------------- |
-| `invoke<T = JSONValue>`(method: string, input: unknown) | `Promise<T>` | 调用当前插件后端 methods 中的方法 |
-| onReconnect(listener: () => void)                       | () => void   | 连接恢复时回调，返回解除订阅函数  |
-
-invoke 的 method 长度 1–100；虽然 TypeScript 接受 unknown，传输与宿主仍要求 input 为 JSON，再由后端 schema 校验。泛型 T 不会验证返回值。插件未激活、方法缺失、schema 不匹配、处理器抛错、结果不是 JSON 或超过 256 KiB 都会失败。完整示例见[后端 API](/fn/docs/plugin-backend-api)。
-
-所有远端调用都可能因连接或宿主校验失败而 reject，需要显示错误并允许用户重试。onReconnect 只通知连接恢复，不自动重放请求或恢复 UI；避免重连时重复发起生成或覆盖未保存草稿。
-
-## 请求与返回类型
-
-`ModelRequest`：
-
-| 字段    | 类型         | 约束                                                |
-| ------- | ------------ | --------------------------------------------------- |
-| modelId | string，必填 | 宿主 models.list 返回的 id，不是服务商原始模型名    |
-| prompt  | string，必填 | 非空且不能仅空白，最多 16,000 字符                  |
-| system  | string，可选 | 系统提示词，最多 16,000 字符                        |
-| title   | string，可选 | 运行标题，前端请求最多 100 字符；省略时从提示词生成 |
-
-宿主全局最多同时生成 8 个任务，单次最长 180 秒，输出最多 64 KiB。超时、输出超限或流断开可产生 failed 终态，并保留已经收到的部分输出。首次启动成功不表示最终成功。
-
-`ModelRun`：
-
-| 字段                    | 类型 / 含义                                 |
-| ----------------------- | ------------------------------------------- |
-| id / pluginId / modelId | string；运行、插件及宿主模型标识            |
-| title / input / output  | string；标题、提示词及当前累计文本          |
-| status                  | running、completed、cancelled、failed       |
-| error                   | string 或 null；失败原因                    |
-| createdAt / updatedAt   | number；Unix 毫秒时间戳                     |
-| revision                | number；当前运行修订号，适合排除乱序响应    |
-| demo                    | boolean；只用于旧演示历史，新运行固定 false |
-
-`ModelInfo`：
-
-| 字段                       | 类型 / 含义                                       |
-| -------------------------- | ------------------------------------------------- |
-| id / name                  | string；宿主模型标识和显示名称                    |
-| provider / model / baseURL | string；服务商、原始模型标识、服务地址            |
-| kind                       | openai-compatible、pi、chatgpt                    |
-| configured / hasApiKey     | boolean；配置状态、是否保存了密钥；不返回密钥本身 |
-| preset                     | string 或 null；Pi provider 标识                  |
-| chatgptProfileId           | 可选 string；稳定宿主账号引用，不包含邮箱或凭证   |
-| options                    | `Record<string, string>`；非密钥选项              |
-
-ChatGPT 模型绑定具体宿主账号；使用 SDK ModelSelect 会自动标记订阅用量入口。自行绘制选择器时也应说明使用 ChatGPT plan。宿主负责登录、刷新与限额，不自动切换为 API Key 计费。
-
-## 模型生成与取消
-
-执行 `fn plugin create ./my-model --template model --id my-model` 并安装依赖，以下代码可完整替换 `src/client.tsx`。保留生成的 styles.css。示例不在模型失效时自动选择替代模型。
-
-```tsx
-import "./styles.css";
-import { useEffect, useRef, useState } from "react";
-import { createPluginClient } from "@semicoder/fn-sdk/client";
-import type { ModelInfo, ModelRun } from "@semicoder/fn-sdk/types";
-import {
-  Alert,
-  Button,
-  EmptyState,
-  Field,
-  Loading,
-  ModelSelect,
-  Page,
-  PageHeader,
-  Textarea,
-} from "@semicoder/fn-sdk/ui";
-
-const client = createPluginClient("my-model");
-export default function ModelPage() {
-  const [models, setModels] = useState<ModelInfo[]>([]);
-  const [modelId, setModelId] = useState("");
-  const [prompt, setPrompt] = useState("");
-  const [run, setRun] = useState<ModelRun | null>(null);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [pending, setPending] = useState(false);
-  const selectedRun = useRef("");
-  const live = useRef(false);
-  const requestPending = useRef(false);
-
-  function accept(next: ModelRun) {
-    if (!live.current || selectedRun.current !== next.id) return;
-    setRun((previous) =>
-      !previous || previous.id !== next.id || next.revision >= previous.revision ? next : previous,
-    );
-  }
-
-  useEffect(() => {
-    let active = true;
-    let generation = 0;
-    live.current = true;
-    async function refreshModels() {
-      const current = ++generation;
-      try {
-        const items = await client.models.list();
-        if (active && current === generation) {
-          setModels(items);
-          setModelId((value) =>
-            items.some((item) => item.id === value && item.configured) ? value : "",
-          );
-        }
-      } catch (reason) {
-        if (active && current === generation) setError(String(reason));
-      } finally {
-        if (active && current === generation) setLoading(false);
-      }
-    }
-    async function refreshRun() {
-      const id = selectedRun.current;
-      if (!id) return;
-      try {
-        const next = await client.runs.get(id);
-        if (active) accept(next);
-      } catch (reason) {
-        if (active && selectedRun.current === id) setError(String(reason));
-      }
-    }
-    const offModels = client.models.onChange(() => void refreshModels());
-    const offRuns = client.runs.onChange(() => void refreshRun());
-    const offReconnect = client.onReconnect(() => {
-      void refreshModels();
-      void refreshRun();
-    });
-    void refreshModels();
-    return () => {
-      active = false;
-      live.current = false;
-      offModels();
-      offRuns();
-      offReconnect();
-    };
-  }, []);
-
-  async function start() {
-    if (requestPending.current) return;
-    requestPending.current = true;
-    setPending(true);
-    setError("");
-    setRun(null);
-    selectedRun.current = "";
-    try {
-      const initial = await client.models.start({ modelId, prompt });
-      if (!live.current) return;
-      selectedRun.current = initial.id;
-      accept(initial);
-      accept(await client.runs.get(initial.id));
-    } catch (reason) {
-      if (live.current) setError(String(reason));
-    } finally {
-      requestPending.current = false;
-      if (live.current) setPending(false);
-    }
-  }
-  async function cancel() {
-    if (!run || requestPending.current) return;
-    requestPending.current = true;
-    setPending(true);
-    setError("");
-    try {
-      accept(await client.runs.cancel(run.id));
-    } catch (reason) {
-      if (live.current) setError(String(reason));
-    } finally {
-      requestPending.current = false;
-      if (live.current) setPending(false);
-    }
-  }
-  const busy = pending || run?.status === "running";
-  const available = models.some((item) => item.configured);
-  const selected = models.some((item) => item.id === modelId && item.configured);
-  return (
-    <Page className="p:space-y-4">
-      <PageHeader title="模型示例" />
-      {loading && <Loading label="读取模型" />}
-      {!loading && !available && (
-        <EmptyState title="尚无可用模型" description="请在设置 → 模型服务中添加并连接模型。" />
-      )}
-      <Field label="模型">
-        <ModelSelect models={models} value={modelId} disabled={busy} onValueChange={setModelId} />
-      </Field>
-      <Field label="提示词">
-        <Textarea
-          value={prompt}
-          maxLength={16000}
-          disabled={busy}
-          onChange={(event) => setPrompt(event.target.value)}
-        />
-      </Field>
-      {run?.status === "running" ? (
-        <Button variant="secondary" loading={pending} onClick={() => void cancel()}>
-          取消生成
-        </Button>
-      ) : (
-        <Button
-          loading={pending}
-          disabled={!selected || !prompt.trim()}
-          onClick={() => void start()}
-        >
-          生成
-        </Button>
-      )}
-      <div className="p:whitespace-pre-wrap p:break-words" aria-live="polite">
-        {run?.output}
-      </div>
-      {run && <p>状态：{run.status}</p>}
-      {(error || run?.error) && <Alert>{error || run?.error}</Alert>}
-    </Page>
-  );
-}
-```
-
-页面重挂载后示例从空白开始；若需要恢复运行，先调用 runs.list 展示记录，再按用户选择 runs.get。切页或卸载不自动取消宿主任务，应由用户显式取消。
-
-## 其他公开类型与管理边界
-
-以下类型也由 types 导出，主要用于宿主管理结果或实现 SDK；createPluginClient 不提供对应管理方法。
-
-| 类型           | 字段与用途                                                                                                                                                                                                                        |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ProviderPreset | id、name、modelCount、apiKeySupported、keyLabel、notice；fields 为 key/label/placeholder/required 数组                                                                                                                            |
-| PresetModel    | id、name、api、baseURL、contextWindow、reasoning；预设模型目录项                                                                                                                                                                  |
-| PluginInfo     | id/name/description/icon/color、version/packageName/source、可空 market（marketId/marketURL）、enabled、status（active/disabled/error）、可空 error、clientURL、可空 styleURL、keepAlive、methods（name/description/inputSchema） |
-| InstallJob     | id/source、operation（install/update）、可空 targetVersion、status（installing/completed/failed）、message、可空 pluginId、createdAt                                                                                              |
-| HostBridge     | call(method, input): `Promise<unknown>`；on(event, listener) 与 onReconnect(listener) 返回取消订阅函数；由宿主注入，不自行读写全局 bridge                                                                                         |
-
-BackendPlugin、PluginMethod、PluginContext 见[后端 API](/fn/docs/plugin-backend-api)；PluginManifest 见[清单](/fn/docs/plugin-manifest)。插件安装、市场配置和模型管理使用[宿主 CLI](/fn/docs/automation)，不能写成 `client.plugins.install` 或 `client.marketplaces`。
-
-来源：client.ts：`packages/sdk/src/client.ts`（[v0.4.5 源码](https://github.com/semicoder-dev/fn/tree/v0.4.5)）、types.ts：`packages/sdk/src/types.ts`（[v0.4.5 源码](https://github.com/semicoder-dev/fn/tree/v0.4.5)）、宿主校验：`shared/api.ts`（[v0.4.5 源码](https://github.com/semicoder-dev/fn/tree/v0.4.5)）。
-
-## 网络工具
-
-本节需要 **fn 0.4.5 / SDK 0.3.5 或以上**。现有 API 与 manifest 0.3 保持兼容，使用旧接口的插件无需重建。
-
-```ts
-const controller = new AbortController();
-const result = await client.web.search(
-  { query: "Bun runtime", engines: ["duckduckgo"], limit: 5 },
-  { signal: controller.signal },
-);
-const page = await client.web.fetch(
-  { url: "https://example.com", format: "markdown", maxBytes: 100_000 },
-  { signal: controller.signal },
-);
-// 页面卸载或用户取消时调用 controller.abort()。
-```
-
-两种方法直接返回结果。SDK 负责后台任务查询、重连后重读与取消；不会自动重发搜索或抓取。每次调用独立编号，不累计会话来源或持久化历史。
-
-搜索返回 text、results、engines；检查各引擎状态，区分无结果和失败。支持 baidu、wechat、toutiao、duckduckgo、limit（1–30）、timeRange、site、timeoutMs（默认每引擎 3000 毫秒）。抓取返回正文 text、url、finalUrl、status、contentType、title、format、truncated 和可选 redirect。HTTP 错误页和跨域跳转有明确元数据，不能只凭 Promise 成功判断页面正常。支持 markdown/text/html，maxBytes 默认 100000，timeoutMs 默认每请求 30000 毫秒；HTTP 地址会升级 HTTPS，不执行页面脚本或读取浏览器登录态。
-
-宿主最多并发 8 项，单任务总时限 120 秒，完整序列化结果最多 256 KiB（独立于 maxBytes，包含元数据与 JSON 转义）。错误包含 code；主动取消为 AbortError。终态只在内存保留最多 32 条、10 分钟，应用重启清空。需要保存结果时由插件自行存储。网络任务运行时会阻止对应插件停用、更新、卸载和应用更新，退出会取消在途请求。
-
-## Agent 会话（开发分支，未发布）
-
-开发分支新增 `client.agents`，公开 fn 0.4.5 / SDK 0.3.5 尚不包含此接口。请使用同一次构建生成的开发宿主与 SDK 快照，默认安装入口仍指向公开版本。
-
-`tools()` 发现可选工具；`create({modelId,system,tools,maxSteps,timeoutMs})` 创建会话；`send(sessionId,text)` 开始一轮多步模型与工具调用并立即返回。宿主提供 `web_search`、`web_fetch`，插件也可显式声明自己的工具；默认不启用工具。
-
-`get(sessionId)` 返回会话及实时 partial 消息，`events(sessionId,after)` 分页读取持久事件，`list()` 返回会话摘要。先订阅 `onChange`，再启动并立即读取；通过 `client.onReconnect` 重读快照及按 seq 补历史，不自动重发不确定的 create/send。消息由文本、推理和工具调用块组成，工具结果保留来源；`deriveAgentMessages` 从 `@semicoder/fn-sdk/agent` 导出，用于投影已结算的模型历史。
-
-revision 用于同一连接内过滤乱序快照。重连时重置实时 revision 基准、忽略旧连接未返回的读取；硬崩溃可能丢失实时修订号，跨重启以持久 seq 补历史。
-
-`cancel(sessionId)` 请求取消，状态在实际执行结束前保持 cancelling；`remove(sessionId)` 删除空闲会话及历史。页面卸载只清理订阅，不取消后台任务。重启将未结束任务标记 interrupted，不重放工具。工具副作用不会自动回滚。
-
-每轮默认最多 8 步、10 分钟，可配置 1–32 步、1 秒–30 分钟；与文本生成共享 8 个模型任务槽。每插件最多保存 100 个会话，用户消息最多 16,000 字符；事件每页最多 100 条 / 256 KiB，模型历史最大 384 KiB，超限提示新建会话，不静默裁剪。工具输出上限为 96 KiB，读取长网页时应缩小 maxBytes。该能力尚未提供自动上下文压缩、后台调度或搜索总结成品插件。
+`cards.list({sessionId,offset,limit})` 读取持久卡片；`cards.respond({sessionId,cardId,actionId,values})` 回复。共享类型和验证来自 `@semicoder/fn-sdk/cards`。提交后按持久状态展示完成/失败/中断，不能把网络返回当作外部副作用完成。详见[后端卡片](/fn/docs/plugin-backend-api#session-自定义卡片)。

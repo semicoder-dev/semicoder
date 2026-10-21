@@ -3,12 +3,12 @@ id: "docs-fn-plugin-ui"
 slug: "plugin-ui"
 title: "UI 基础与表单"
 description: "SDK 公共组件、布局、输入、选择控件、模型选择及图标参考。"
-date: "2026-10-16"
+date: "2026-10-21"
 ---
 
-> 适用于 fn 0.4.5 / SDK 0.3.5，manifest 为 0.3。先按[安装指南](/fn/docs/installation)安装 fn；旧名称插件和旧应用数据不迁移。
+> 适用于 fn 0.5.0 / SDK 0.4.0，采用 Cordis 应用契约。先按[安装指南](/fn/docs/installation)安装 fn；旧名称插件和旧应用数据不迁移。
 
-本页适用于 **fn 0.4.5 / SDK 0.3.5**。所有示例组件从 `@semicoder/fn-sdk/ui` 导入，在 CLI 创建的插件页面中使用。宿主共享 React、ReactDOM 与公共 UI，不直接导入 Base UI、Radix、Lucide 或宿主源码。
+本页适用于 **fn 0.5.0 / SDK 0.4.0**。所有示例组件从 `@semicoder/fn-sdk/ui` 导入，在 CLI 创建的插件页面中使用。宿主共享 React、ReactDOM 与公共 UI，不直接导入 Base UI、Radix、Lucide 或宿主源码。
 
 ## 公共约定
 
@@ -280,17 +280,9 @@ export function ComboboxExample() {
 }
 ```
 
-## ModelSelect：宿主模型选择
+## 模型选择
 
-| 属性          | 类型 / 默认                                        |
-| ------------- | -------------------------------------------------- |
-| models        | 必填 ModelInfo[]，由 client.models.list 读取       |
-| value         | 必填 string；空字符串表示未选中                    |
-| onValueChange | 必填 `(value: string) => void`                     |
-| disabled      | 可选 boolean；无任何 configured 模型时组件也会禁用 |
-| aria-label    | 可选 string，默认“选择模型”                        |
-
-组件按服务商分组，支持名称/provider/id 搜索，禁用不可用模型并标记 ChatGPT plan 用量入口。不自行加载目录，也不负责启动模型；不接受 className、size 或原生 onChange。完整用法见[模型生成示例](/fn/docs/plugin-client-api#模型生成与取消)。
+新契约使用连接和模型二元组。通过 `ctx.clientApp.list("models.saved")` 读取用户已添加模型，使用 Select/Combobox 先选连接再选模型；不要使用旧 `ModelInfo` / `client.models.list` 教程。旧 ModelSelect 仍可能存在于源码导出中，但不负责新连接协议。参阅[前端 API](/fn/docs/plugin-client-api)。
 
 ## 图标与 Provider
 
@@ -298,6 +290,6 @@ export function ComboboxExample() {
 
 它们接受 SVG 属性及 size、strokeWidth 等图标属性。纯装饰使用 aria-hidden，有交互的图标放进带 label 的 IconButton。不直接安装另一份 Lucide 作为公共 UI 的替代。
 
-`UIProvider` 接受 children（必填）、visible（默认 true）、pluginId（可选）。宿主已经包裹插件页面，提供 Tooltip、Toast、可见性和带插件作用域的 Portal，**普通插件不要再嵌套 Provider**。Provider 的导出用于宿主集成等场景，不会让 createPluginClient 在普通网页中可用。
+`UIProvider` 接受 children（必填）、visible（默认 true）、pluginId（可选）。宿主已经包裹插件页面，提供 Tooltip、Toast、可见性和带插件作用域的 Portal，**普通插件不要再嵌套 Provider**。Provider 的导出用于宿主集成等场景，不会在普通网页中创建 clientApp 宿主连接。
 
-后续阅读：[浮层与反馈](/fn/docs/plugin-ui-overlays)、[样式与主题](/fn/docs/plugin-styling)。来源：UI 导出：`packages/sdk/src/ui.tsx`（[v0.4.5 源码](https://github.com/semicoder-dev/fn/tree/v0.4.5)）、组件实现：`packages/sdk/src/ui`（[v0.4.5 源码](https://github.com/semicoder-dev/fn/tree/v0.4.5)）。
+后续阅读：[浮层与反馈](/fn/docs/plugin-ui-overlays)、[样式与主题](/fn/docs/plugin-styling)。来源：UI 导出：`packages/sdk/src/ui.tsx`（[v0.5.0 源码](https://github.com/semicoder-dev/fn/tree/v0.5.0)）、组件实现：`packages/sdk/src/ui`（[v0.5.0 源码](https://github.com/semicoder-dev/fn/tree/v0.5.0)）。

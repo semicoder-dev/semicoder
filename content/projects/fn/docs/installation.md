@@ -2,65 +2,61 @@
 id: "docs-fn-installation"
 slug: "installation"
 title: "下载与安装"
-description: "下载 fn 0.4.5，安装官方插件，了解独立数据目录和源码构建。"
-date: "2026-10-16"
+description: "下载 fn 0.5.0，安装 Cordis 官方应用，了解独立数据目录与手机内测。"
+date: "2026-10-21"
 ---
 
 ## 下载 fn
 
-当前版本为 **fn 0.4.5 / build 9**，支持 **macOS 14+ / Apple Silicon**。应用与 DMG 使用 Developer ID 签名，DMG 已通过 Apple 公证并附带公证票据。
+当前版本为 **fn 0.5.0 / build 10**，支持 **macOS 14+ / Apple Silicon**。应用和 DMG 使用 Developer ID 签名，DMG 已通过 Apple 公证并附带票据。
 
-[下载 fn 0.4.5（Apple Silicon）](https://github.com/semicoder-dev/fn/releases/download/v0.4.5/fn-0.4.5-9-mac-arm64.dmg) · [发行说明](https://github.com/semicoder-dev/fn/releases/tag/v0.4.5)
+[下载 fn 0.5.0（Apple Silicon）](https://github.com/semicoder-dev/fn/releases/download/v0.5.0/fn-0.5.0-10-mac-arm64.dmg) · [发行说明](https://github.com/semicoder-dev/fn/releases/tag/v0.5.0)
 
-下载并打开 DMG，将 `fn.app` 拖入「应用程序」，然后从「应用程序」启动。普通用户无需安装 Bun、Node.js 或 Swift。
+打开 DMG，将 `fn.app` 拖入「应用程序」并启动。普通用户无需安装 Bun、Node.js 或 Swift。
 
 安装包 SHA-256：
 
 ```text
-3d2bd971e3d0ac654bf5139d54b97593bf502eaf03b6802ebc443ea69a28421e
+c4dbd5fe51c30f8318476eef3ad1ee3c3301aaed5e3df7e6db96924f431e3a02
 ```
 
-## 从 fn 0.4.4 升级
+## 从旧版本升级
 
-现有插件、模型配置和本地数据保留；官方插件无需重建或重新安装。网络接口需要 fn 0.4.5 和 SDK 0.3.5。本次运行时标识不同，需要下载并替换完整 DMG，不能仅安装代码更新。
+0.5 使用 Bun 宿主和原版 dsh / Cordis 内核，必须下载并替换完整 DMG。旧 SDK、插件、模型连接与 Chat v2 不兼容，需要重新配置连接、添加模型并安装新版应用。
 
-## 从原麻辣烫开始使用 fn
+新数据写入各模式数据目录的 `Backend/cordis-v1/`，不会读取、迁移或删除旧数据。不要将旧目录复制到新目录。手机须配合新的 Chat v3 内测客户端；运行目录回滚与数据库格式回滚分别处理，不能将新版数据直接交给旧内核。
 
-本次使用完整 DMG 安装。fn 的应用标识为 `com.semicoder.fn`，数据保存在 Application Support 下的独立目录；不读取、移动或删除旧应用的数据，不提供旧名称、旧 CLI 或旧插件别名。
+## 安装官方应用
 
-首次启动后重新配置模型或登录 ChatGPT，再安装插件。旧应用仍保留自己的数据；不要将其目录复制到 fn。插件开发者须改用新 SDK、`fn` 清单和新运行时标识后重新构建，manifest 兼容版本仍为 `0.3`。
+宿主不内置插件。在「应用中心」安装 **译文、随手记、网络搜索**，三者均为 Cordis **0.1.0**，精确消费公开 SDK **0.4.0**。随手记只需本地 KV；译文与搜索需要先在模型服务添加连接及可用模型。
 
-## 安装官方插件
+[官方应用仓库](https://github.com/semicoder-dev/fn-plugins) 使用 GitHub Releases 分发完整归档。新市场为 `https://raw.githubusercontent.com/semicoder-dev/fn-plugins/main/marketplace-cordis.json`；旧市场保留旧契约，不供新版宿主消费。
 
-fn 不内置插件。在「应用中心 → 插件市场」安装 **译文 0.1.2** 和 **随手记 0.1.2**。译文使用宿主模型，随手记使用本地 KV，无需模型。接着阅读[第一次使用](/fn/docs/getting-started)和[插件管理](/fn/docs/plugins)。
+插件安装和更新先生成并验证完整运行目录，任务空闲后重启后台，窗口保留并重连。插件属于可信本地代码，只安装可信来源。接着阅读[第一次使用](/fn/docs/getting-started)和[插件管理](/fn/docs/plugins)。
 
-官方插件由 [fn-plugins](https://github.com/semicoder-dev/fn-plugins) 通过 GitHub Releases 分发；它们不是公开 npm 插件包。官方市场只登记已经公开下载并校验过的完整归档，检查到更新后由用户逐个确认安装。
-
-如需本地构建，在该仓库根执行：
+从官方仓库构建新应用，在 `examples/cordis/` 执行：
 
 ```bash
 bun install --frozen-lockfile --ignore-scripts
 bun run check
 bun run test
 bun run pack
-bun run index:check
+bun catalog.ts check
 ```
-
-当前官方插件仓库固定消费公开 `@semicoder/fn-sdk@0.3.4`，不依赖相邻源码。生成的 `artifacts/translate-0.1.2.tgz` 和 `artifacts/quick-notes-0.1.2.tgz` 可通过「从地址安装」选择；本地打包不会自动上架。
 
 ## 插件开发与 SDK
 
-应用菜单可安装 `fn` 命令行。按[插件开发](/fn/docs/plugin-development)创建项目，CLI 会携带 SDK 0.3.5 固定快照；项目可脱离宿主源码开发。独立维护时也可使用固定公开版本：
+SDK **0.4.0** 已公开，可以独立安装：
 
 ```bash
-bun add --dev --exact @semicoder/fn-sdk@0.3.5
+bun add --dev --exact @semicoder/fn-sdk@0.4.0
 ```
 
-开发插件需要 Bun 1.4.2 或更高版本；React 与 ReactDOM 19 应精确同版本，并保留模板所需的 TypeScript 和类型依赖。SDK、应用和插件的版本分别管理。
+应用菜单可安装 `fn` CLI，使用 `fn application create/check/build/pack`；不保留旧 `plugin` 命令。后端 exports 指向 ESM TypeScript，由 Bun 执行；可选客户端入口必须预构建，并共享宿主的 React 和 UI。按[插件开发](/fn/docs/plugin-development)设置精确核心 peer 版本。
 
 ## 从源码构建
 
-源码见 [fn v0.4.5](https://github.com/semicoder-dev/fn/tree/v0.4.5)。源码构建需要 Bun 1.4.3 和 Swift 6 工具链（Xcode / Command Line Tools）。在仓库根执行：
+[fn v0.5.0 源码](https://github.com/semicoder-dev/fn/tree/v0.5.0) 需要 Bun 1.4.3 和 Swift 6 / Xcode 工具链。在仓库根执行：
 
 ```bash
 bun install --frozen-lockfile --ignore-scripts
@@ -68,26 +64,16 @@ bun run check
 bun run build
 ```
 
-产物为 `dist/fn.app`；本地构建不具备官方发行的签名公证证明。FIA 源码在同仓 `framework/fia/`，报告记录源码、工具链和产物哈希，不需要相邻 FIA 仓库。
+产物为 `dist/fn.app`，本机构建没有官方发行的签名公证证明。FIA 在同仓 `framework/fia/` 构建，框架报告记录实际源码和产物摘要；不依赖相邻 FIA 仓库。公开 FIA npm 0.18.0 与当前共仓源码不是同一产物，独立 npm 发布继续暂停。
 
-日常体验使用 `bun run dev` 或 `bun run run`。开发实例为 `fn Dev` / `fn-dev`，使用 `.fia/dev/data/com.semicoder.fn`；预览为 `fn Preview` / `fn-preview`，使用 `.fia/preview/data/com.semicoder.fn`。两者带 DEV / PREV 标记，并禁用正式更新源。直接打开 `dist/fn.app` 使用 fn 正式数据目录；三种模式互相隔离。
+日常体验用 `bun run dev`（fn Dev）或 `bun run run`（fn Preview）。它们分别使用 `.fia/dev/data/com.semicoder.fn`、`.fia/preview/data/com.semicoder.fn`，禁用正式更新源。直接打开 `dist/fn.app` 使用正式应用数据目录。
 
 ## 后续更新
 
-应用更新源为 `https://semicoder-dev.github.io/fn/updates/latest.json`。启动时及每 24 小时检查更新，安装前需用户确认；任务忙碌时推迟，原生运行时变化需要完整 DMG。新版本的公开安装包和更新源独立验收；不同运行时的升级按应用提示执行。
+应用更新源为 `https://semicoder-dev.github.io/fn/updates/latest.json`。启动时及每 24 小时检查，安装前需确认；后台任务忙碌时推迟，原生运行时改变需完整 DMG。插件市场与应用更新源独立管理。
 
-更新站独立保存 fn 历史，不提供旧更新源回退。官方市场为 `https://raw.githubusercontent.com/semicoder-dev/fn-plugins/main/marketplace.json`；插件更新与宿主更新分开管理。
+## 手机内测
 
-## 共同开发
+iPhone **0.3.0（4）** 已在既有内部 TestFlight 组分发，要求 iOS 17+；目前没有公开邀请。手机和桌面使用同一 iCloud 账号，Chat v3 支持多个 Session、已添加模型筛选、自定义交互卡片、审批、离线队列和 Markdown。桌面模型凭证不传到手机。
 
-FIA 与 fn 共仓开发，fn 稳定后再独立拆出框架，FIA 独立 npm 继续暂停。`dev` 自动监听框架源码并重建、重启，应用前端保持 HMR；重启会清除未保存状态并使浏览器授权失效。
-
-`framework:check`、`framework:pack`、`framework:verify` 分别检查框架、验证归档和仓库外独立消费。公开 FIA 0.18.0 与当前共仓源码并非同一产物。
-
-## iOS 配套应用状态
-
-iOS 17+ 与独立 macOS 14+ 原生 fn Chat 使用共享聊天核心。聊天端按服务端切换机器人会话，发送纯文字并填写插件请求卡片；现有 fn 桌面应用仍是插件宿主。2026-10-18 聊天 v2 的 iOS **0.2.0（2）** 已完成 Apple 处理并加入既有本人内部 TestFlight 组，配套生产 CloudKit 和本机 fn Beta 已验证，当时 TestFlight 安装受阻；2026-10-19 用户确认 Apple 处理后已能正常通过 TestFlight 安装，生产手机业务/通知仍待验收。没有公开 TestFlight 邀请或 Mac 聊天端安装包。
-
-2026-10-19 追加 Markdown：iOS/Mac 消息正文和请求卡片文字块支持标题、列表、引用、代码、表格和链接，可复制代码或原文。包含此次更新的 iOS **0.2.1（3）** 已完成 Apple 处理，并加入既有本人内部 TestFlight 组，状态“正在测试”，TestFlight 安装已由用户确认恢复正常，手机 Markdown 交互仍待实测；旧 0.2.0（2）不含 Markdown。历史数据无需迁移，Mac 聊天端仍需本地构建，公开下载入口不变。
-
-源码核心位于 `clients/apple/`，开发构建需要匹配 CloudKit 容器的签名；TestFlight 与开发环境的数据相互隔离。旧 0.1.0（1）不包含 v2，旧数据保留且不迁移。公开 fn 0.4.5 与 SDK 0.3.5 也不包含聊天能力，普通用户仍按本页安装已发布 macOS 应用。
+生产 CloudKit v3 schema 和两环境订阅已部署验证；新版本的真机卡片交互、跨设备模型选择和锁屏通知点击仍待实测，上传成功不代表这些设备场景已经通过。旧 Chat v2 历史保留，不迁移到新 zone。独立 Mac Chat 暂无公开安装包，需要从 `clients/apple/` 本地构建并配置匹配的签名。

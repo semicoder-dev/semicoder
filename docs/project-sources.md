@@ -1,5 +1,33 @@
 # 项目资料与发布状态
 
+## 2026-10-21 fn 0.5 联合发行
+
+fn **0.5.0/build 10** 标签固定 `4f37222c23c5acc5cdcd139df971be0f4847ebc3`，正式工作流 `39533452898` 成功。公开 DMG 66,055,111 字节，SHA-256 `c4dbd5fe51c30f8318476eef3ad1ee3c3301aaed5e3df7e6db96924f431e3a02`；匿名下载、签名、公证票据、Gatekeeper、生产 CloudKit/profile、两项原生依赖签名、55 个内嵌 SDK 文件及 32 个更新文件逐项核验通过。全新目录启动至正常退出 14,795 ms，只启动一次后台。
+
+SDK **0.4.0** 固定 `ba159de`，OIDC `39527538926` 成功；agent-webtool **0.8.2** 固定 `e1f8135`，OIDC `39524814310` 成功；公开包与 CI 一致、干净消费通过。三个 Cordis 官方应用 **0.1.0** 固定 `e3fb4dd`，新市场经 fn-plugins PR #10 合并，实际安装、空闲切换、作用域释放和 KV 恢复通过。
+
+iPhone **0.3.0（4）** 构建 `1f885f57-275a-4ab4-9066-c6e136c7c78c` 已加入既有内部 TestFlight 组，状态“正在测试”；Chat v3 生产新增 9 类型并保留原 18 类型，两环境四类订阅实际成功。手机新卡片、跨设备模型与通知点击仍未真机实测。FIA 独立 npm 继续暂停。
+
+官网安装页已依据公开 DMG 切换版本和下载哈希；SDK/API/模型/Chat/插件指南改为当前 Cordis 契约。完整 DMG 升级、重新配置与旧数据保留均明确说明。本站质量、部署及线上验收在本次 main 发布中分别检查；下列各节保留此前阶段记录，其“未发布”不代表本次最终状态。
+
+## 2026-10-21 Session 卡片与手机模型筛选（未发布）
+
+来源为 fn `packages/runtime/src/card-contract.ts`、`FnRuntime.createCard/respondCard`、`backend/chat-next/service.ts` 和 Apple `SessionSync`/`SessionCardView`。预览页补充应用卡片贡献、持久认领与离线回复、已添加模型筛选和失效命令拒绝；旧 SDK/协议不兼容，v3 schema、TestFlight 和官网均未部署。仅更新预览说明与来源记录，公开版本、安装入口和下载链接不变。
+
+## 2026-10-21 fn 桌面核心能力补齐（未发布）
+
+继续验收同步：预览页补充共享 UI、SVG、keepAlive、Git 安装和 Chat 已读；已有订阅真实调用/网页抓取/取消通过，明确预设目录不等于账号权限，以及 CloudKit entitlement 与设备验收边界。公开安装入口不变，无推送或部署。
+
+来源为 fn `frontend/RuntimeApp.tsx`、`RuntimeModels.tsx`、`RuntimeApplications.tsx`、`backend/runtime-product.ts` 与 `shared/runtime-api.ts`。Cordis 预览页补充侧栏、外观、多账号模型目录、已添加模型、新协议市场和 FIA 应用更新；明确官方新市场尚未发布、Dev/Preview 不接收正式更新。公开安装页、版本与下载入口不变，无推送或部署。本轮 33 篇内容、生成技术清单、文档链接与变更文件格式检查通过；纯文档同步，未重跑无关 Worker 测试或生产构建。
+
+## 2026-10-20 fn Cordis 新架构（未发布）
+
+fn `codex/dsh-runtime` 从 `6d5d748` 实施 Bun + dsh 0.2.1-rc.2 / Cordis 4.0.5，架构证据在 `docs/cordis-runtime.md`、`upstream.lock.json`；官方示例在 fn-plugins 同名分支。本站新增 Cordis 预览文档，公开安装入口、SDK 版本及 TestFlight 说明不改成新功能已发行。FIA 开发与分发指南已说明 `runtime.assets` / `runtimeDirectory` 的普通文件边界、SHA-256 运行时身份及完整安装包要求，明确公开 npm 0.18.0 尚不支持。普通文档变更，未推送、部署或调整发布版本。
+
+本地验收：内容与技术清单生成、全库格式、33 篇内容及文档链接检查通过；生产构建与 39 个公开静态页面的 Home 导航、目录锚点、草稿隔离及真实 Pagefind 项目搜索检查通过。新增公开路径仅 `/fn/docs/cordis-preview`，无移除路径；fn/FIA 安装页与项目首页源码和本轮基线一致，三篇受影响页面的产物保留“未发布”及正确 canonical。同步更新内容规范中的 15 篇 fn 指南与“开发预览”分组记录；未运行无关 Worker 测试，未部署或验收线上页面。
+
+随后同步预览页的分页 SDK 与 Dev 空闲重载说明，来源为 fn `packages/sdk/src/cordis-client.tsx`、`scripts/runtime-dev.ts` 和 `backend/runtime.ts`；再次通过内容/技术清单生成、33 篇内容、文档链接、130 个文件格式、生产构建与 39 个公开静态页面检查。正式文档与公开安装入口继续保持原状。
+
 ## 2026-10-19 本地主干整合
 
 用户确认 TestFlight 安装恢复并要求合回主干。fn Markdown 与 0.2.1（3）发布资料已提交为 `6d5d748` 并快进合入本地 `main`；34 个非文档源码/配置文件与发布归档清单一致。本站配套文档在 `codex/chat-markdown` 提交后合入本地 `main`，保留特性分支。整合包含此前聊天、Agent loop、SVG 及配套指南；其他仓库未合并。未推送或部署，公开下载入口与线上网站版本不变。

@@ -29,7 +29,7 @@ bun run build
 
 ## 公开应用分发
 
-FIA 0.17.0 的 `fia build --dmg` 创建本机测试镜像；`fia release` 对应用和 DMG 签名、公证，并检查镜像内应用，输出 DMG、SHA-256 与报告。配置 `signing.releaseIdentity` 与 `signing.notarizationProfile` 后执行项目中的 `bun run release`。签名身份为 Developer ID Application；证书、公证凭据由发布者准备，不进入仓库。
+FIA 0.17.0 的 `fia build --dmg` 创建本机测试镜像；`fia release` 对应用和 DMG 签名、公证，并检查镜像内应用，输出 DMG、SHA-256 与报告。配置 `signing.releaseIdentity` 与 `signing.notarizationProfile` 后执行项目中的 `bun run release`。签名身份为 Developer ID Application；证书、公证凭据由发布者准备，不进入仓库。fn 共仓工具链要求包含在资源归档中的 Mach-O 依赖先签名、再压缩和计算摘要；Apple 最终状态须为 `Accepted`，拒绝时读取 issue 日志并停止；隔离启动失败保留最后状态与日志，不能通过跳过检查发布。
 
 历史 npm 0.16.1 的 `fia release` 输出 ZIP；当前 0.18.0 教程保留上述 DMG 行为。已有应用升级至新原生宿主须通过完整安装包交付。
 
@@ -53,6 +53,12 @@ FIA_UPDATE_PRIVATE_KEY_FILE=/secure/path/my-app-keys/update-private.pem bunx fia
 
 安装入门从 [快速开始](/fia/docs/installation) 继续；生产行为以所用包内框架契约为准。
 
+### 固定运行时资源（fn 共仓版本）
+
+共仓源码支持 `runtime.assets`：声明的普通文件只复制到完整应用的 `Contents/Resources/runtime`，文件路径和实际复制快照的 SHA-256 纳入 `runtimeId`。`release --update` 不携带这些文件，修改归档或其他固定资源后须重新分发完整安装包。普通代码更新的原生文件、符号链接、文件数量及大小限制保持不变。
+
+此功能尚未包含于公开 FIA npm 0.18.0；未使用 `runtime.assets` 的应用保留原有运行时身份计算。使用方式见 [资源与数据](/fia/docs/development#资源与数据)。
+
 ## CloudKit 签名支持（开发中）
 
-fn 共仓源码已增加按开发、预览、正式模式分别配置应用 entitlements 和 provisioning profile 的能力，并提供 macOS/iOS 共用 Swift 传输包及原生 CloudKit 桥，包括 zone 静默变更订阅、按记录类型的创建提醒和幂等退订。业务应用自行维护消息协议、outbox 与同步游标，不能将推送作为可靠事件日志。此功能尚未包含于公开 FIA npm 0.18.0；本机 fn Beta 的 Developer ID 签名与生产 CloudKit 同步已通过，公证后分发和安装组合仍未验收。本页现有公开安装与发行路径保持不变。
+fn 共仓源码已增加按开发、预览、正式模式分别配置应用 entitlements 和 provisioning profile 的能力，并提供 macOS/iOS 共用 Swift 传输包及原生 CloudKit 桥，包括 zone 静默变更订阅、按记录类型的创建提醒和幂等退订。业务应用自行维护消息协议、outbox 与同步游标，不能将推送作为可靠事件日志。此功能尚未包含于公开 FIA npm 0.18.0；本机 fn Beta 的 Developer ID 签名与生产 CloudKit 同步已通过，fn 0.5.0 公开签名安装包的公证、Gatekeeper、生产权限及隔离启动已通过独立验收。本页现有公开安装与发行路径保持不变。
