@@ -2,25 +2,29 @@
 id: "docs-fn-installation"
 slug: "installation"
 title: "下载与安装"
-description: "下载 fn 0.5.0，安装 Cordis 官方应用，了解独立数据目录与手机内测。"
+description: "下载 fn 0.5.1，安装 Cordis 官方应用，了解独立数据目录与手机内测。"
 date: "2026-10-21"
 ---
 
 ## 下载 fn
 
-当前版本为 **fn 0.5.0 / build 10**，支持 **macOS 14+ / Apple Silicon**。应用和 DMG 使用 Developer ID 签名，DMG 已通过 Apple 公证并附带票据。
+当前版本为 **fn 0.5.1 / build 11**，支持 **macOS 14+ / Apple Silicon**。应用和 DMG 使用 Developer ID 签名，DMG 已通过 Apple 公证并附带票据。
 
-[下载 fn 0.5.0（Apple Silicon）](https://github.com/semicoder-dev/fn/releases/download/v0.5.0/fn-0.5.0-10-mac-arm64.dmg) · [发行说明](https://github.com/semicoder-dev/fn/releases/tag/v0.5.0)
+[下载 fn 0.5.1（Apple Silicon）](https://github.com/semicoder-dev/fn/releases/download/v0.5.1/fn-0.5.1-11-mac-arm64.dmg) · [发行说明](https://github.com/semicoder-dev/fn/releases/tag/v0.5.1)
 
 打开 DMG，将 `fn.app` 拖入「应用程序」并启动。普通用户无需安装 Bun、Node.js 或 Swift。
 
 安装包 SHA-256：
 
 ```text
-c4dbd5fe51c30f8318476eef3ad1ee3c3301aaed5e3df7e6db96924f431e3a02
+9e7d5f803119376919f21af5735448b5525f4bbf5354c687d4618ba416524340
 ```
 
-## 从旧版本升级
+## 从 0.5.0 升级
+
+0.5.1 修复官方插件被误判“核心版本不兼容”。请退出 fn 后用完整 DMG 替换应用；已有连接、会话、KV 和应用保留，不需要清理数据或重新配置账号。运行目录会在任务空闲后切换，随后可从应用中心正常安装三个官方插件。
+
+## 从 0.4.x 或更早版本升级
 
 0.5 使用 Bun 宿主和原版 dsh / Cordis 内核，必须下载并替换完整 DMG。旧 SDK、插件、模型连接与 Chat v2 不兼容，需要重新配置连接、添加模型并安装新版应用。
 
@@ -56,7 +60,7 @@ bun add --dev --exact @semicoder/fn-sdk@0.4.0
 
 ## 从源码构建
 
-[fn v0.5.0 源码](https://github.com/semicoder-dev/fn/tree/v0.5.0) 需要 Bun 1.4.3 和 Swift 6 / Xcode 工具链。在仓库根执行：
+[fn v0.5.1 源码](https://github.com/semicoder-dev/fn/tree/v0.5.1) 需要 Bun 1.4.3 和 Swift 6 / Xcode 工具链。在仓库根执行：
 
 ```bash
 bun install --frozen-lockfile --ignore-scripts
