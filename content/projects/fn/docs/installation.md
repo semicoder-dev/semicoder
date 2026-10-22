@@ -2,27 +2,27 @@
 id: "docs-fn-installation"
 slug: "installation"
 title: "下载与安装"
-description: "下载 fn 0.5.1，安装 Cordis 官方应用，了解独立数据目录与手机内测。"
-date: "2026-10-21"
+description: "下载 fn 0.5.2，安装 Cordis 官方应用，了解独立数据目录与手机内测。"
+date: "2026-10-22"
 ---
 
 ## 下载 fn
 
-当前版本为 **fn 0.5.1 / build 11**，支持 **macOS 14+ / Apple Silicon**。应用和 DMG 使用 Developer ID 签名，DMG 已通过 Apple 公证并附带票据。
+当前版本为 **fn 0.5.2 / build 12**，支持 **macOS 14+ / Apple Silicon**。应用和 DMG 使用 Developer ID 签名，DMG 已通过 Apple 公证并附带票据。
 
-[下载 fn 0.5.1（Apple Silicon）](https://github.com/semicoder-dev/fn/releases/download/v0.5.1/fn-0.5.1-11-mac-arm64.dmg) · [发行说明](https://github.com/semicoder-dev/fn/releases/tag/v0.5.1)
+[下载 fn 0.5.2（Apple Silicon）](https://github.com/semicoder-dev/fn/releases/download/v0.5.2/fn-0.5.2-12-mac-arm64.dmg) · [发行说明](https://github.com/semicoder-dev/fn/releases/tag/v0.5.2)
 
 打开 DMG，将 `fn.app` 拖入「应用程序」并启动。普通用户无需安装 Bun、Node.js 或 Swift。
 
 安装包 SHA-256：
 
 ```text
-9e7d5f803119376919f21af5735448b5525f4bbf5354c687d4618ba416524340
+ed7f08d19912ff8f5b39fdab039156a664d8b6653d688d940bb8e5023e9ff224
 ```
 
-## 从 0.5.0 升级
+## 从 0.5.x 升级
 
-0.5.1 修复官方插件被误判“核心版本不兼容”。请退出 fn 后用完整 DMG 替换应用；已有连接、会话、KV 和应用保留，不需要清理数据或重新配置账号。运行目录会在任务空闲后切换，随后可从应用中心正常安装三个官方插件。
+0.5.2 改为共享固定内核、按插件增量安装，减少安装时的目录准备等待，同时包含 0.5.1 的官方市场兼容修复。请退出 fn 后用完整 DMG 替换应用；已有连接、会话、KV 和应用保留，不需要清理数据或重新配置账号。运行目录会在任务空闲后切换，随后可从应用中心正常安装三个官方插件。
 
 ## 从 0.4.x 或更早版本升级
 
@@ -36,7 +36,7 @@ date: "2026-10-21"
 
 [官方应用仓库](https://github.com/semicoder-dev/fn-plugins) 使用 GitHub Releases 分发完整归档。新市场为 `https://raw.githubusercontent.com/semicoder-dev/fn-plugins/main/marketplace-cordis.json`；旧市场保留旧契约，不供新版宿主消费。
 
-插件安装和更新先生成并验证完整运行目录，任务空闲后重启后台，窗口保留并重连。插件属于可信本地代码，只安装可信来源。接着阅读[第一次使用](/fn/docs/getting-started)和[插件管理](/fn/docs/plugins)。
+插件安装和更新只准备变化的插件及其依赖，再校验完整依赖图，任务空闲后重启后台，窗口保留并重连。插件属于可信本地代码，只安装可信来源。接着阅读[第一次使用](/fn/docs/getting-started)和[插件管理](/fn/docs/plugins)。
 
 从官方仓库构建新应用，在 `examples/cordis/` 执行：
 
@@ -60,7 +60,7 @@ bun add --dev --exact @semicoder/fn-sdk@0.4.0
 
 ## 从源码构建
 
-[fn v0.5.1 源码](https://github.com/semicoder-dev/fn/tree/v0.5.1) 需要 Bun 1.4.3 和 Swift 6 / Xcode 工具链。在仓库根执行：
+[fn v0.5.2 源码](https://github.com/semicoder-dev/fn/tree/v0.5.2) 需要 Bun 1.4.3 和 Swift 6 / Xcode 工具链。在仓库根执行：
 
 ```bash
 bun install --frozen-lockfile --ignore-scripts

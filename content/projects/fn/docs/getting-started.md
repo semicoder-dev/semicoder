@@ -3,10 +3,10 @@ id: "docs-fn-getting-started"
 slug: "getting-started"
 title: "第一次使用"
 description: "安装 Cordis 应用、配置独立模型连接并连接手机 Chat。"
-date: "2026-10-21"
+date: "2026-10-22"
 ---
 
-fn 0.5.1 是桌面插件平台，也可以通过独立手机 Chat 控制后台 Agent。首次安装按[下载指南](/fn/docs/installation)完成；0.4.x 或更早版本的模型和插件数据不自动迁移，0.5.0 升级则保留现有数据。
+fn 0.5.2 是桌面插件平台，也可以通过独立手机 Chat 控制后台 Agent。首次安装按[下载指南](/fn/docs/installation)完成；0.4.x 或更早版本的模型和插件数据不自动迁移，0.5.x 升级则保留现有数据。
 
 ## 安装应用
 
