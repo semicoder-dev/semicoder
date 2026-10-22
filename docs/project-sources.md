@@ -1,5 +1,9 @@
 # 项目资料与发布状态
 
+## 2026-10-22：看板应用候选
+
+来源为 fn-plugins `codex/all-plugins` 本地提交 `76a3cf1`（2026-10-23 按用户要求提交），路径 `plugins/kanban`；独立开发归档固定 fn `2d67742`，来源和 SHA-256 在 `vendor/manifest.json`。新增多看板、卡片/列表拖动、详情与归档，插件 SQLite 位于 `plugins-v1/fn-kanban/kanban.sqlite`，无需模型/云服务。官网只补充全插件化候选页，不改公开安装、SDK 或下载入口。市场使用本机 HTTPS 源验收，不代表已上架；没有推送、发布或部署。
+
 ## 2026-10-22：fn 全插件化本地候选
 
 来源为 fn `2d67742`、fn-plugins `b7a339f` 的 `codex/all-plugins` 本地提交，基于公开 0.5.2，版本未升。新增候选页，公开安装和下载入口保持 0.5.2；旧公开 SDK/市场说明保留并标注候选链接。FIA 动态 API 为共仓未发布源码。已核实默认 profiles、标准 Cordis 插件、原版客户端 Slots、plugins-v1 和 Chat v4 路径；实际验证见 fn 的 docs/runtime-validation.md。网站内容仅本地修改，没有推送或部署。
