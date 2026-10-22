@@ -6,6 +6,8 @@ description: "fn 0.5 的 Cordis 应用、独立模型连接和持久会话。"
 date: "2026-10-21"
 ---
 
+> [全插件化候选](/fn/docs/plugins-preview)是未发布的独立开发方案；本页继续描述当前公开版本。
+
 > 适用于 fn 0.5.0、SDK 0.4.0 和 iPhone 0.3.0（4）。此页面路径保留原预览地址；安装见[下载指南](/fn/docs/installation)。
 
 ## 应用、连接和会话

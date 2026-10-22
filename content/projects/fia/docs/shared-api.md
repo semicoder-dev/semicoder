@@ -76,3 +76,9 @@ bun run agent call greeting.read --json '{"name":"朋友"}'
 - 后台任务通过 `beforeUpdate` 阻止忙碌时更新，通过 `stop` 释放资源；FIA 不提供持久任务调度器。
 
 附件或连续流可以使用 `defineBackend.http`。它与框架复用同一个 Bun 服务，自定义路由挂在 `/api` 下，不会自动成为应用 CLI 方法。
+
+## 共仓候选：动态 API
+
+fn 全插件化分支新增 `createAPIRegistry()`：插件按命名空间注册契约和处理器，schema 实时反映当前能力；撤销时关闭入口、传播取消并等待在途调用结束。`fetchBackend('/api/...')` 用于经过 FIA 授权的同源业务资源传输。通用能力位于 FIA，不依赖 fn 产品页面。
+
+这些变更尚未发布到 FIA npm，不能用于当前公开安装包；现有静态契约继续有效。[候选边界](/fn/docs/plugins-preview)。

@@ -1,5 +1,9 @@
 # 项目资料与发布状态
 
+## 2026-10-22：fn 全插件化本地候选
+
+来源为 fn `2d67742`、fn-plugins `b7a339f` 的 `codex/all-plugins` 本地提交，基于公开 0.5.2，版本未升。新增候选页，公开安装和下载入口保持 0.5.2；旧公开 SDK/市场说明保留并标注候选链接。FIA 动态 API 为共仓未发布源码。已核实默认 profiles、标准 Cordis 插件、原版客户端 Slots、plugins-v1 和 Chat v4 路径；实际验证见 fn 的 docs/runtime-validation.md。网站内容仅本地修改，没有推送或部署。
+
 ## 2026-10-22 fn 0.5.2 插件安装提速发行
 
 fn **0.5.2/build 12** 固定 `f6edfc3a1941c1199739a73d772bb4a1a1b702cb`，正式工作流 `39701865820` 成功。公开 DMG 66,101,814 字节，SHA-256 `ed7f08d19912ff8f5b39fdab039156a664d8b6653d688d940bb8e5023e9ff224`；五附件匿名下载、签名、公证、Gatekeeper、生产 CloudKit/profile、内嵌 SDK 和签名更新独立验收通过。

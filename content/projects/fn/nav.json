@@ -28,7 +28,7 @@
     },
     {
       "title": "架构",
-      "items": ["docs-fn-cordis-preview"]
+      "items": ["docs-fn-cordis-preview", "docs-fn-plugins-preview"]
     }
   ]
 }

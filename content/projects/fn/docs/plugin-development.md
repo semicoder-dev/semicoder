@@ -6,6 +6,8 @@ description: "使用 Cordis、Bun TypeScript 和共享 React 创建 fn 0.5 应�
 date: "2026-10-21"
 ---
 
+> [全插件化候选](/fn/docs/plugins-preview)是未发布的独立开发方案；本页继续描述当前公开版本。
+
 适用于 fn 0.5.0 / SDK 0.4.0。插件是由 Bun 执行的 Cordis npm 包，可提供独立 React 页面或仅提供后台服务。旧 `plugin` 命令和旧插件接口不适用于此版本。
 
 ## 创建应用
