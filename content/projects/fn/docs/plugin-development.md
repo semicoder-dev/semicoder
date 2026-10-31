@@ -1,61 +1,40 @@
 ---
 id: "docs-fn-plugin-development"
 slug: "plugin-development"
-title: "开发第一个插件"
-description: "使用 Cordis、Bun TypeScript 和共享 React 创建 fn 0.5 应用。"
-date: "2026-10-21"
+title: "插件开发"
+description: "使用 SDK 0.5 创建普通 Cordis 后端和前端插件。"
+date: "2026-10-31"
 ---
 
-> [全插件化候选](/fn/docs/plugins-preview)是未发布的独立开发方案；本页继续描述当前公开版本。
+适用于 fn 0.6 / SDK 0.5。插件是普通 ESM npm 包，可以只有后端、只有前端，也可以同时提供两者。旧 SDK 0.4 聚合应用 API 不兼容。
 
-适用于 fn 0.5.0 / SDK 0.4.0。插件是由 Bun 执行的 Cordis npm 包，可提供独立 React 页面或仅提供后台服务。旧 `plugin` 命令和旧插件接口不适用于此版本。
+## 开始开发
 
-## 创建应用
-
-安装桌面版并安装其命令行后，使用 Bun 1.4.3：
+SDK 负责构建和类型化客户端；最完整的可复现示例是[官方插件仓库](https://github.com/semicoder-dev/fn-plugins)中的 `plugins/kanban` 和 `plugins/models-dev`。克隆仓库后在根目录执行：
 
 ```sh
-fn application create ./my-app --name 我的应用
-cd my-app
-bun install --ignore-scripts
-fn application check
-fn application build
-fn application pack
+bun install --frozen-lockfile --ignore-scripts
+bun run check
+bun run test
+bun run pack
 ```
 
-开发宿主使用 `fn-dev`，预览使用 `fn-preview`。源码工作区可运行 `bun run agent application …`。`create --service` 生成无页面服务包；目标目录必须不存在。CLI 复制宿主固定 SDK 归档到 `vendor/fn-sdk.tgz`，独立项目无需读取宿主源码。
+SDK 精确依赖公开 `@semicoder/fn-sdk@0.5.0`。宿主 UI、RPC 等尚未独立发布的契约由该仓库 `vendor/manifest.json` 固定归档及 SHA-256 提供；不能用 npm 上同版本号的其他包替代。宿主不依赖此仓库构建。
 
-## 后端
+## 目录与入口
 
-```ts
-import type { Context } from "@deepseek-ai/cordis";
-import type {} from "@semicoder/fn-sdk";
-export const inject = ["app"];
-export function apply(ctx: Context) {
-  ctx.app.method("echo", (input) => input);
-  ctx.app.chat({ id: "main", name: "我的助手", systemPrompt: "帮助用户完成任务。" });
-}
+后端 `exports["."]` 可指向 TypeScript，由 Bun 直接运行。前端源码通过 `fn.clientSource` 指定，构建后 `exports["./client"]` 指向模块 factory。浏览器安全 API 类型放在独立 `./contract` 导出，不能导入后台存储或凭证模块。
+
+声明每个使用的共享依赖为精确 peer，保持 Cordis、React、FIA、SDK 和 fn-ui 单实例。后台用 `inject` 声明服务，通过 Cordis effect 清理资源；前端注册布局插槽，不修改集中路由。
+
+## 检查和安装
+
+```sh
+fn plugin check ./my-plugin
+fn plugin build ./my-plugin
+fn plugin pack ./my-plugin
 ```
 
-`app` 绑定当前应用作用域。业务方法负责检查 JSON 输入，资源通过 Cordis effect 清理。应用拥有后台会话，页面关闭或手机断线不取消任务。
+也可从 `@semicoder/fn-sdk/build` 调用 `inspectPlugin`、`buildPlugin`、`packPlugin`。把输出归档安装到 fn Dev 或隔离 Preview，验证菜单/弹窗焦点、明暗、窄窗、重启持久化及卸载清理，再公开归档。
 
-## 页面
-
-```tsx
-import type { Context } from "@deepseek-ai/cordis";
-import type {} from "@semicoder/fn-sdk/cordis-client";
-import { Button } from "@semicoder/fn-sdk/ui";
-export const inject = ["clientApp"];
-export function apply(ctx: Context) {
-  const api = ctx.clientApp;
-  api.page({
-    id: "main",
-    title: "我的应用",
-    component: () => <Button onClick={() => void api.kv.set("hello", "world")}>保存</Button>,
-  });
-}
-```
-
-使用构建器生成 `dist/client.js`，不要内嵌第二份 React、Cordis 或 SDK UI。将 `.tgz` 安装到应用中心后，宿主准备完整依赖目录，等待任务空闲再重启后台加载。开发修改同样需要重新构建/打包和更新安装。
-
-后续阅读：[包结构](/fn/docs/plugin-manifest)、[后端 API](/fn/docs/plugin-backend-api)、[前端 API](/fn/docs/plugin-client-api)。
+继续阅读[包配置](/fn/docs/plugin-manifest)、[后端 API](/fn/docs/plugin-backend-api)、[前端 API](/fn/docs/plugin-client-api)与[分发](/fn/docs/plugin-distribution)。

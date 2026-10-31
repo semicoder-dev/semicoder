@@ -2,33 +2,32 @@
 id: "docs-fn-automation"
 slug: "automation"
 title: "CLI 与自动化"
-description: "fn 0.5 的应用 CLI、分页查询和持久会话自动化。"
-date: "2026-10-21"
+description: "通过动态命名空间 API 和插件构建命令操作 fn。"
+date: "2026-10-31"
 ---
 
-适用于 fn 0.5.0。使用随宿主提供的 FIA CLI，不启动额外后台服务器。开发命令前缀为 `fn-dev`，预览为 `fn-preview`，正式版为 `fn`。
+适用于 fn 0.6 / SDK 0.5。应用菜单可安装正式 `fn` CLI；开发和预览分别使用 `fn-dev`、`fn-preview`。CLI 连接现有实例，不启动额外业务服务器。
 
-## 查询状态
+## 查询运行状态
 
 ```sh
-fn call apps.list --json '{}'
+fn call plugins.status --json '{}'
+fn call plugins.list --json '{}'
+fn call market.list --json '{}'
 fn call connections.list --json '{"offset":0,"limit":50}'
-fn call models.saved --json '{"offset":0,"limit":50}'
-fn call sessions.list --json '{"offset":0,"limit":50}'
+fn open --browser
 ```
 
-真实操作及参数以宿主命令帮助和共享 API 为准。列表可能分页，需处理 `nextOffset/hasMore`；模型目录和标题等无 Agent 调用也必须显式选择连接。业务方法通过 `apps.invoke` 调用，必须提供应用 ID、方法名和输入。
+可调用方法由当前启用的插件动态注册。以运行实例的命令帮助及对应插件 contract 为准；分页列表须处理返回的游标。旧 `apps.invoke` 聚合入口不适用于本版。
 
-## 页面与任务
+## 构建插件
 
 ```sh
-fn open --browser
-fn application create ./my-app
-fn application check ./my-app
-fn application build ./my-app
-fn application pack ./my-app
+fn plugin check ./my-plugin
+fn plugin build ./my-plugin
+fn plugin pack ./my-plugin
 ```
 
-浏览器授权属于当前实例，后台重启后重新连接。页面断开不停止后台任务，任务取消和审批回复均使用显式命令。不要将临时流式事件当作唯一历史；重连从持久 Session 投影和游标补齐。
+源码仓库可用 `bun run agent plugin ...` 执行同一组命令。SDK 0.5 提供检查、构建与打包，不提供旧 `application create` 模板命令。
 
-旧 `plugins.*`、`runs.*` 和 `plugin create` 属于旧架构，不适用于新宿主。新数据目录独立，脚本不应直接操作旧数据库或复制旧凭证。
+浏览器授权属于当前实例，后台重启后重新连接。页面生命周期与后台任务分开，取消任务必须通过所属服务的显式契约；不要直接写运行目录或数据库。

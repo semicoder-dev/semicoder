@@ -1,5 +1,21 @@
 # 项目资料与发布状态
 
+## 2026-10-31：fn 0.6 全插件化发行
+
+用户明确授权提交、合并主干并发布上线。fn `v0.6.0` 固定 `8e255e5c481d1c2f3f2ec9f090071fee37175770`，0.6.0/build 13；主干 CI `41168837335` 与正式签名公证流程 `41169637096` 成功。公开 DMG 五附件已匿名核对大小/摘要，DMG SHA-256 `05dd07c0bd7534e2865fb974b9d34444503a4dde1216e7f516c64fa4ac7de8e8`，Developer ID、Apple 公证票据与 Gatekeeper 通过后才切换安装入口。
+
+SDK 0.5.0 固定 `sdk-v0.5.0` / `a4bf705`，OIDC `41168375135` 成功。公开包与本地/CI 逐字节一致，SHA-256 `ca3959be9b0ea2a774f25d2dea10c021b570c12b7a48aa4b67cdd193b443ea0d`；SLSA 来源及新缓存 registry 安装、双端插件构建/打包通过。
+
+fn-plugins `83e067c` 的看板和模型目录 0.1.0 已公开，分别固定 `kanban-v0.1.0`、`models-dev-v0.1.0`；市场提交 `91fdd82` 只登记匿名验证通过的归档。SDK 精确 npm 0.5.0，其余宿主契约从 fn `8e255e5` 默认 seed 导出并以摘要固定；仓库外冻结重建、24 测试、两次主干 CI 与真实市场安装/数据保留通过。旧 schema 2 索引和发行资产保留。
+
+本次同步 fn 首页和全部 16 篇使用/开发指南，替换旧应用 SDK、CLI、Base UI/Tailwind 和 Chat 默认承诺。来源为 `profiles/`、`packages/sdk/`、`packages/ui/`、`plugins/{plugin-manager,plugin-market,ui-layout,ui-navigation}/` 及两个官方插件。新架构需完整 DMG，旧 0.5.x 数据不读取、迁移或删除，需重新配置连接和安装新版插件。Chat/手机/CloudKit 不在本次范围；真实新 OAuth、强制刷新和第二账号仍未逐一实测。FIA npm 与 agent-webtool 版本不变。
+
+官网本地 check、51 单元/12 Workers 测试、生产构建与 40 页面检查通过；本次源码推送和两环境部署结果单独记录，不以应用发布代替网站上线。下方为对应日期的历史阶段，不代表当前公开状态。
+
+## 2026-10-31：Chat 暂缓发行
+
+用户确认聊天用途尚未定稿，本阶段首版排除 Chat。来源为 fn `6ae9ce8` 后本地工作树：`profiles/default.json`、`profiles/chat-experimental.json`、`scripts/runtime-seed.ts` 及 `docs/chat-experimental.md`。默认组合与归档移除聊天页面、默认助手、卡片和同步专属包，首页保持应用中心；通用 Agent/Session/模型/工具保留。官网仅修订全插件化候选边界，不改公开 fn 0.5.2、SDK、手机及正式下载入口；未推送或部署。
+
 ## 2026-10-31：models.dev 模型目录候选
 
 来源为 fn-plugins `codex/all-plugins` 本地提交 `815beaab0c1591bd0f95fb651b6efec5c7227ccb` 的 `plugins/models-dev/`；独立消费既有固定 vendor，不改变 fn/FIA 运行契约。2026-10-31 实际核对 models.dev Models 页及 `catalog.json?type=all`，按上游规则依次匹配有效的 canonical_model_id、完整模型 ID、供应商/模型 ID，关联供应商报价。官网只同步候选使用说明；本地源码/归档不等于公开插件，正式安装入口、生产市场和应用版本不变，未推送或部署。

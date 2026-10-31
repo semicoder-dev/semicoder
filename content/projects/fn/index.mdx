@@ -2,8 +2,8 @@
 id: "project-fn"
 slug: "fn"
 title: "fn"
-description: "把模型、存储和界面能力组合起来，让每个插件成为一个好用的小应用。"
-date: "2026-10-22"
+description: "一个可组合的本地插件平台，用独立插件提供应用、模型和界面能力。"
+date: "2026-10-31"
 tags: ["AI 应用", "插件平台", "macOS"]
 stack: ["FIA", "Bun", "Cordis", "React"]
 status: "构建中"
@@ -12,24 +12,21 @@ featured: true
 start: { "label": "下载与安装", "doc": "docs-fn-installation" }
 ---
 
-## 应用页面与独立 Chat
+## 由插件组合的小应用
 
-fn 把模型连接、Agent、Session、工具、KV 和共享 UI 放在宿主里，让插件专注自己的工作流。侧栏切换应用，每个应用拥有独立页面；同一个后台 Agent 也可由手机 Chat 控制。
+fn 0.6.0 使用 Bun/FIA 与原版 Cordis，把应用中心、设置、模型服务和界面组合为独立插件。启动进入应用中心，按需安装自己的工作流。
 
-## 常用能力
+## 从看板和模型目录开始
 
-- 译文、随手记和网络搜索从官方应用中心自主安装，宿主不内置插件。
-- 同一服务商可创建多个独立 API Key 或订阅连接，选择已添加模型创建会话。
-- Agent 支持多轮工具、流式输出、取消和审批；关闭页面不停止任务，重启从持久历史恢复。
-- 手机 Chat 通过同一 iCloud 账号同步命令、会话、已读和自定义表单卡片，离线可重试。
-- 主题、置顶、SVG 图标、页面状态保留、插件管理与应用自动更新由宿主统一提供。
+- 看板管理多个看板、列表、卡片、共享标签、截止日期、检查清单和归档，数据保存在本机。
+- 模型目录浏览 models.dev 的模型规格、能力和供应商报价，支持搜索、筛选与缓存。
+- 两个官方插件均无需 API Key；需要模型能力的其他插件可使用独立模型连接。
+- 全部页面共享原版 dsh 控件与浅色、深色主题，插件变更在后台空闲后生效。
 
-当前稳定版为 **0.5.2**，通过共享固定内核和插件增量安装缩短安装等待；从 0.5.x 升级保留现有数据。
-
-从[下载与安装](/fn/docs/installation)开始，再阅读[第一次使用](/fn/docs/getting-started)。不想配置模型时，可以先安装随手记。
+从[下载与安装](/fn/docs/installation)开始，再阅读[第一次使用](/fn/docs/getting-started)。本版暂不提供 Chat 页面或手机聊天同步。
 
 ## 为插件开发者
 
-fn 0.5 采用 Bun + 原版 dsh / Cordis。后端可以直接运行 TypeScript，浏览器入口是共享 React 的 Cordis 插件。使用 `fn application create/check/build/pack` 创建和分发普通 npm 应用包。
+SDK 0.5 提供普通 Cordis 插件的构建工具与类型化客户端。后端可直接运行 TypeScript，前端使用共享 React、fn-ui 和布局插槽。通过 `fn plugin check/build/pack` 检查并分发 npm 格式插件包。
 
-从[应用开发](/fn/docs/plugin-development)、[后端 API](/fn/docs/plugin-backend-api)、[前端 API](/fn/docs/plugin-client-api)和[架构](/fn/docs/cordis-preview)了解新契约。SDK 0.4 与旧 SDK、插件和 Chat v2 不兼容，新数据目录不会读取、迁移或删除旧数据。
+阅读[插件开发](/fn/docs/plugin-development)和[架构](/fn/docs/cordis-preview)。0.6 与旧 SDK/插件不兼容，需要完整 DMG；旧连接和数据不自动迁入，旧文件保留。

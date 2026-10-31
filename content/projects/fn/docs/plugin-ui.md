@@ -1,295 +1,35 @@
 ---
 id: "docs-fn-plugin-ui"
 slug: "plugin-ui"
-title: "UI 基础与表单"
-description: "SDK 公共组件、布局、输入、选择控件、模型选择及图标参考。"
-date: "2026-10-21"
+title: "共享 UI"
+description: "使用宿主共享的原版 dsh 控件和组合组件。"
+date: "2026-10-31"
 ---
 
-> 适用于 fn 0.5.0 / SDK 0.4.0，采用 Cordis 应用契约。先按[安装指南](/fn/docs/installation)安装 fn；旧名称插件和旧应用数据不迁移。
+fn 0.6 的 UI 从 `@semicoder/fn-ui` 导入，SDK 0.5 不再提供 `./ui`、主题和 Tailwind 导出。插件声明 fn-ui peer，由宿主提供同一份控件与 React。
 
-本页适用于 **fn 0.5.0 / SDK 0.4.0**。所有示例组件从 `@semicoder/fn-sdk/ui` 导入，在 CLI 创建的插件页面中使用。宿主共享 React、ReactDOM 与公共 UI，不直接导入 Base UI、Radix、Lucide 或宿主源码。
+## 控件
 
-## 公共约定
-
-- `Size` 为 `"sm" | "md" | "lg"`，对应 28 / 36 / 40px 控件高度；仅声明 size 的组件接受它。
-- `Tone` 为 `"neutral" | "success" | "warning" | "error"`，用于 Badge、Alert。
-- 封装控件的 className 接受字符串；推荐完整静态 `p:` 类或 CSS Module。不要传 Base UI 风格的 className 函数。
-- 原生输入用 onChange(event)，选择组件用 onValueChange(value, details)，复选框与开关用 onCheckedChange(checked, details)。事件的首个参数是新值，不是 DOM event。
-- 受控模式同时传 value/checked/open 和对应回调；非受控模式用 defaultValue/defaultChecked/defaultOpen。浮层根的 onOpenChange 在 SDK 中简化为 `(open: boolean) => void`。
-- 表格列出 SDK 属性及主要透传属性；其余原生或底层属性以当前 SDK 的 `React.ComponentProps<typeof 组件>` 为准，不向组件猜测添加属性。
-
-## 页面与面板
-
-| 组件                                     | 属性与用途                                                                         |
-| ---------------------------------------- | ---------------------------------------------------------------------------------- |
-| Page                                     | div 属性、children、className；默认内容最大宽 1120px                               |
-| PageHeader                               | 必填 title: string；可选 description: string、actions: ReactNode                   |
-| Panel                                    | section 的 HTML 属性；容纳一个业务区域                                             |
-| PanelHeader / PanelContent / PanelFooter | div 属性；分别组织标题、内容与操作                                                 |
-| SettingsGroup                            | 必填 title: string；可选 description；其余 section 属性                            |
-| SettingsRow                              | 必填 label: ReactNode；可选 description: ReactNode；children 放控件，透传 div 属性 |
-| InputGroup                               | div 属性；组合输入及装饰元素，不自动提供标签                                       |
+共享导出包含 Button、Input、Checkbox、Switch、Menu、Modal、Tooltip、Tag、SegmentedControl 和图标；Select、Textarea、Notice、PageHeader、Surface、SettingsSection、SettingsRow 等组合组件同样由 fn-ui 提供。准确 props 以固定契约的类型为准。
 
 ```tsx
-import {
-  Page,
-  PageHeader,
-  Panel,
-  PanelHeader,
-  PanelContent,
-  PanelFooter,
-  Button,
-  SettingsGroup,
-  SettingsRow,
-  Switch,
-} from "@semicoder/fn-sdk/ui";
-
-export function LayoutExample() {
-  return (
-    <Page>
-      <PageHeader title="偏好" description="配置当前插件。" actions={<Button>保存</Button>} />
-      <Panel>
-        <PanelHeader>阅读设置</PanelHeader>
-        <PanelContent>
-          <SettingsGroup title="显示" description="只影响本插件。">
-            <SettingsRow label="紧凑模式" description="减少条目间距。">
-              <Switch aria-label="紧凑模式" defaultChecked />
-            </SettingsRow>
-          </SettingsGroup>
-        </PanelContent>
-        <PanelFooter>
-          <Button variant="secondary">恢复默认</Button>
-        </PanelFooter>
-      </Panel>
-    </Page>
-  );
-}
+import { Button, Select, PageHeader } from "@semicoder/fn-ui";
+<PageHeader title="示例" actions={<Button onClick={save}>保存</Button>} />;
+<Select
+  label="状态"
+  value={status}
+  onValueChange={setStatus}
+  options={[
+    { value: "todo", label: "待办" },
+    { value: "done", label: "完成" },
+  ]}
+/>;
 ```
 
-SettingsRow 的可见 label 不会像 Field 那样自动关联控件，需提供 aria-label 或显式关联。布局示例中的按钮仅展示外观，业务保存由插件实现。
+使用语义清楚的标签，图标按钮提供可访问名称。列表、表单和空状态由业务页面组合，不复制一份控件实现。
 
-## 按钮、输入与 Field
+## 布局与主题
 
-| 组件        | 属性、默认值与事件                                                                                                          |
-| ----------- | --------------------------------------------------------------------------------------------------------------------------- |
-| Button      | 原生 button 属性；variant 默认 primary，可选 secondary/ghost/danger；size 默认 md；loading 显示进度并禁用；type 默认 button |
-| IconButton  | Button 全部属性；必填 label: string 转为 aria-label                                                                         |
-| Input       | 原生 input 属性，size 改为 Size，默认 md；onChange 使用原生事件                                                             |
-| Textarea    | 原生 textarea 属性，例如 rows、maxLength、value、onChange；没有 SDK size 属性                                               |
-| SearchInput | Input 属性；默认 type=search，并附搜索图标                                                                                  |
-| Field       | 必填 label: string、children；可选 id、hint: ReactNode、error: string；error 优先于 hint 显示                               |
+业务页面采用 CSS Modules，原版主题由 ui-base/ui-theme 统一加载。只提供浅色、深色和跟随系统；不恢复旧自定义颜色主题。布局适配窄窗口，避免页面和内部列表同时产生不必要的滚动条。
 
-Field 内放一个逻辑控件，自动关联标签、说明和错误状态。Select 关联 Trigger，Combobox 关联 Input/Trigger；复合选择器不要复制同一 Field ID 到多个可编辑控件。
-
-```tsx
-import { useState } from "react";
-import {
-  Button,
-  IconButton,
-  Copy,
-  Field,
-  Input,
-  InputGroup,
-  SearchInput,
-  Textarea,
-} from "@semicoder/fn-sdk/ui";
-
-export function InputsExample() {
-  const [name, setName] = useState("");
-  return (
-    <div className="p:space-y-4">
-      <Field label="名称" hint="最多 60 字符" error={name.length > 60 ? "名称过长" : undefined}>
-        <Input value={name} onChange={(event) => setName(event.target.value)} />
-      </Field>
-      <Field label="搜索">
-        <SearchInput placeholder="输入关键词" />
-      </Field>
-      <Field label="备注">
-        <Textarea rows={4} />
-      </Field>
-      <InputGroup>
-        <Input aria-label="分享地址" readOnly value="example" />
-        <IconButton
-          label="复制地址"
-          variant="ghost"
-          onClick={() => void navigator.clipboard.writeText("example")}
-        >
-          <Copy size={16} aria-hidden="true" />
-        </IconButton>
-      </InputGroup>
-      <Button size="sm" variant="secondary">
-        取消
-      </Button>
-    </div>
-  );
-}
-```
-
-需要提交表单时显式设置 `type="submit"`；普通 Button 不会意外提交。IconButton 的 label 必填，Tooltip 不能替代可访问名称。
-
-## 复选框、开关、单选、数值与滑块
-
-| 组件        | 主要属性与事件                                                                                          |
-| ----------- | ------------------------------------------------------------------------------------------------------- |
-| Checkbox    | checked/defaultChecked、onCheckedChange、indeterminate、disabled；内置勾选指示器                        |
-| Switch      | checked/defaultChecked、onCheckedChange、disabled；内置开关滑块                                         |
-| RadioGroup  | value/defaultValue、onValueChange、disabled；容纳 Radio                                                 |
-| Radio       | value、disabled；每个选项用 aria-label 或自己的 label 命名                                              |
-| NumberField | value/defaultValue、onValueChange、min/max/step、disabled；内置输入及加减按钮；值可为 null              |
-| Slider      | value/defaultValue、onValueChange、min/max/step、disabled；number 或 number[]；内置轨道与对应数量的拖柄 |
-
-SDK 未另设这些值的默认范围，未传属性使用当前包携带的底层默认值。业务代码建议显式指定初值、范围及步长；以下示例范围为 0–100。
-
-```tsx
-import { useState } from "react";
-import {
-  Checkbox,
-  Field,
-  NumberField,
-  Radio,
-  RadioGroup,
-  Slider,
-  Switch,
-} from "@semicoder/fn-sdk/ui";
-
-export function ControlsExample() {
-  const [enabled, setEnabled] = useState(false);
-  const [amount, setAmount] = useState<number | null>(20);
-  return (
-    <div className="p:space-y-4">
-      <Field label="开启提醒">
-        <Switch checked={enabled} onCheckedChange={setEnabled} />
-      </Field>
-      <Field label="包含摘要">
-        <Checkbox defaultChecked />
-      </Field>
-      <Field label="语言">
-        <RadioGroup defaultValue="zh">
-          <Radio value="zh" aria-label="中文" />
-          <span>中文</span>
-          <Radio value="en" aria-label="英文" />
-          <span>英文</span>
-        </RadioGroup>
-      </Field>
-      <Field label="数量">
-        <NumberField value={amount} onValueChange={setAmount} min={0} max={100} step={1} />
-      </Field>
-      <Field label="强度">
-        <Slider defaultValue={20} min={0} max={100} step={1} />
-      </Field>
-    </div>
-  );
-}
-```
-
-## Select：固定选项
-
-| 导出                           | 主要属性与用途                                                                                   |
-| ------------------------------ | ------------------------------------------------------------------------------------------------ |
-| Select                         | value/defaultValue、onValueChange、items、multiple、disabled，以及 open/defaultOpen/onOpenChange |
-| SelectTrigger                  | size 默认 md；disabled、children；省略 children 时显示带“请选择”占位的 SelectValue               |
-| SelectValue                    | placeholder；显示选中项标签                                                                      |
-| SelectContent                  | Popup 属性、className、children、finalFocus；内部提供 Portal、定位器和列表                       |
-| SelectItem                     | 必填 value，children 为标签；可选 disabled；自动显示选中指示器                                   |
-| SelectGroup / SelectGroupLabel | 对选项分组及添加组标题                                                                           |
-
-SDK 从直接组合的 SelectItem 收集标签，也可显式传 items。单选清空时可能得到 null；不要把它当成原生 change event。SelectContent 的定位固定 sideOffset=6、collisionPadding=12、alignItemWithTrigger=false，默认与触发器同宽；**没有开放 side/align 等定位参数**。
-
-```tsx
-import { useState } from "react";
-import {
-  Field,
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectGroup,
-  SelectGroupLabel,
-  SelectItem,
-} from "@semicoder/fn-sdk/ui";
-
-export function SelectExample() {
-  const [language, setLanguage] = useState<string | null>("zh");
-  return (
-    <Field label="输出语言">
-      <Select value={language} onValueChange={setLanguage}>
-        <SelectTrigger>
-          <SelectValue placeholder="请选择语言" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectGroupLabel>语言</SelectGroupLabel>
-            <SelectItem value="zh">中文</SelectItem>
-            <SelectItem value="en">英文</SelectItem>
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-    </Field>
-  );
-}
-```
-
-## Combobox：可搜索选择
-
-| 导出                               | 主要属性与用途                                                                                                                                              |
-| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Combobox                           | items、value/defaultValue、onValueChange、inputValue/onInputValueChange、multiple、disabled；filteredItems/filter 可用于自定义筛选；open 回调与 Select 相同 |
-| ComboboxInput                      | 可编辑搜索输入，继承 Field 关联；固定 md 外观                                                                                                               |
-| ComboboxTrigger                    | 打开列表的按钮式触发器，固定 md 外观                                                                                                                        |
-| ComboboxValue                      | 在按钮式选择器中展示所选值                                                                                                                                  |
-| ComboboxContent                    | Popup 属性、finalFocus；内置 Portal，sideOffset=6、collisionPadding=12，未开放定位参数                                                                      |
-| ComboboxList                       | 列表容器，支持按 items 渲染子项函数                                                                                                                         |
-| ComboboxItem                       | value、children、disabled；内置选中指示器                                                                                                                   |
-| ComboboxEmpty                      | 无结果状态                                                                                                                                                  |
-| ComboboxGroup / ComboboxGroupLabel | 选项分组与标题                                                                                                                                              |
-| ComboboxCollection                 | 按当前集合渲染子项，用于组合分组列表                                                                                                                        |
-
-```tsx
-import { useState } from "react";
-import {
-  Field,
-  Combobox,
-  ComboboxInput,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxList,
-  ComboboxItem,
-} from "@semicoder/fn-sdk/ui";
-
-const languages = ["中文", "English", "日本語"];
-export function ComboboxExample() {
-  const [value, setValue] = useState<string | null>(null);
-  return (
-    <Field label="搜索语言">
-      <Combobox items={languages} value={value} onValueChange={setValue}>
-        <ComboboxInput placeholder="输入语言" />
-        <ComboboxContent>
-          <ComboboxEmpty>没有匹配项</ComboboxEmpty>
-          <ComboboxList>
-            {(item: string) => (
-              <ComboboxItem key={item} value={item}>
-                {item}
-              </ComboboxItem>
-            )}
-          </ComboboxList>
-        </ComboboxContent>
-      </Combobox>
-    </Field>
-  );
-}
-```
-
-## 模型选择
-
-新契约使用连接和模型二元组。通过 `ctx.clientApp.list("models.saved")` 读取用户已添加模型，使用 Select/Combobox 先选连接再选模型；不要使用旧 `ModelInfo` / `client.models.list` 教程。旧 ModelSelect 仍可能存在于源码导出中，但不负责新连接协议。参阅[前端 API](/fn/docs/plugin-client-api)。
-
-## 图标与 Provider
-
-公开图标清单：Plus、X、Check、ChevronDown、ChevronRight、ArrowRight、Copy、Settings、Search、Sun、Moon、Monitor、Package、Blocks、MoreHorizontal、Trash2、Pencil、Download、ExternalLink、RefreshCw、Square、SlidersHorizontal。
-
-它们接受 SVG 属性及 size、strokeWidth 等图标属性。纯装饰使用 aria-hidden，有交互的图标放进带 label 的 IconButton。不直接安装另一份 Lucide 作为公共 UI 的替代。
-
-`UIProvider` 接受 children（必填）、visible（默认 true）、pluginId（可选）。宿主已经包裹插件页面，提供 Tooltip、Toast、可见性和带插件作用域的 Portal，**普通插件不要再嵌套 Provider**。Provider 的导出用于宿主集成等场景，不会在普通网页中创建 clientApp 宿主连接。
-
-后续阅读：[浮层与反馈](/fn/docs/plugin-ui-overlays)、[样式与主题](/fn/docs/plugin-styling)。来源：UI 导出：`packages/sdk/src/ui.tsx`（[v0.5.0 源码](https://github.com/semicoder-dev/fn/tree/v0.5.0)）、组件实现：`packages/sdk/src/ui`（[v0.5.0 源码](https://github.com/semicoder-dev/fn/tree/v0.5.0)）。
+官方看板展示了二级页面、密集工具栏、日期、标签和拖动交互；模型目录展示了筛选、分页和详情。见[弹层交互](/fn/docs/plugin-ui-overlays)和[样式规则](/fn/docs/plugin-styling)。

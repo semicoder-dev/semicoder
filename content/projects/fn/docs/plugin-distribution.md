@@ -2,33 +2,27 @@
 id: "docs-fn-plugin-distribution"
 slug: "plugin-distribution"
 title: "构建与分发"
-description: "不可变应用归档、Cordis 市场与等待空闲的后台更新。"
-date: "2026-10-21"
+description: "固定完整插件归档，验证后登记 schema 3 市场。"
+date: "2026-10-31"
 ---
 
-适用于 fn 0.5.0 / SDK 0.4.0。后端源码可由 Bun 直接执行，浏览器入口必须预构建。
-
-## 构建和验包
+适用于 fn 0.6 / SDK 0.5。后端 ESM TypeScript 可由 Bun 运行；客户端必须先通过 SDK 构建为原版模块 factory。发行包包含源码入口、客户端产物、样式、图标和必要数据文件。
 
 ```sh
-bun install --frozen-lockfile --ignore-scripts
-fn application check
-fn application build
-fn application pack
+fn plugin check ./my-plugin
+fn plugin build ./my-plugin
+fn plugin pack ./my-plugin
 ```
 
-也可使用 `@semicoder/fn-sdk/build-cordis` 的 `runCordisTool`、`checkCordisApplication`、`buildCordisApplication` 和 `packCordisApplication`。构建失败保留前一次完整 dist；pack 遵循 npm files/exports 并检查实际入口。发布包不能依赖相邻源码或未打包文件。
+## 发布顺序
 
-## 发布来源
+1. 固定源码和依赖，完成检查、业务测试、独立构建及隔离宿主交互验收。
+2. 将完整 npm 格式 tgz 发布到不可变的 HTTPS 地址，保存 SHA-256。
+3. 从公开地址重新下载并核对摘要、元数据及实际安装。
+4. 最后将通过验证的归档登记到 schema 3 市场。
 
-手动安装支持 npm、HTTPS tgz、本地归档、`github:owner/repo#ref`、`git+https://…#ref` 以及 HTTPS `.git#ref`。Git 只归档指定 ref 的已提交内容，不运行构建脚本，需提交前端产物；使用固定 SHA 才能复现。
+索引包含 `schemaVersion: 3`、市场名称与 `plugins` 数组；每项提供 `packageName/name/description/version/url/sha256/peers` 及可选图标。`peers` 与包中声明一致；URL 不含凭证，版本已公开后不覆盖文件或移动标签。
 
-官方应用通过 GitHub Releases 分发，市场索引为 `marketplace-cordis.json`，schemaVersion 为 2。条目包含 id、packageName、name、description、version、HTTPS url、sha256 及精确 core 依赖版本，可带 icon/iconSvg。新索引不混入旧 manifest 插件。
+官方例子见[marketplace.json](https://github.com/semicoder-dev/fn-plugins/blob/main/marketplace.json)。旧 schema 2 使用 applications/core，不能替代新格式。宿主会按真实归档和共享内核校验兼容性，不以市场显示可用代替安装验证。
 
-每个版本使用不可变 URL 和 SHA-256。先公开并独立验收归档，再通过 PR 更新市场；不能用相同版本字符串代替产物一致性验证。
-
-## 安装与更新
-
-宿主先解析完整依赖图，生成锁文件并检查核心单例，再启动检查候选运行目录。等待任务空闲后停止接收新任务、flush、销毁并重启 Bun；FIA 保留窗口，前端重连。失败保留可用目录。
-
-运行阶段关闭自动安装。卸载或停用释放应用作用域；数据保留。目录回滚与数据库回滚分开处理，新格式写入后不能直接启动旧内核。应用更新与插件更新独立，原生宿主变化需要完整 DMG。
+插件包与应用安装包分别发行。安装或更新在后台空闲时生效；变更数据库格式前先定义插件自己的数据策略，不覆盖用户正在运行的目录。
