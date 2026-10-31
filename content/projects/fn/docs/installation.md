@@ -34,7 +34,9 @@ date: "2026-10-31"
 
 ## 安装官方插件
 
-在应用中心刷新官方市场并安装 **看板 0.1.0** 或 **模型目录 0.1.0**，两者均无需模型 API Key。看板提供本地任务管理，模型目录浏览 models.dev 规格与报价，不产生模型调用，也不自动配置连接。
+在应用中心刷新官方市场并安装 **看板 0.1.1** 或 **模型目录 0.1.1**，两者均无需模型 API Key。看板提供本地任务管理，模型目录浏览 models.dev 规格与报价，不产生模型调用，也不自动配置连接。
+
+已有 0.1.0 可在「插件市场」检查更新，再分别更新两个插件。0.1.1 优化弹窗间距与焦点，保留现有数据，不需要重新下载安装 fn。
 
 [官方插件仓库](https://github.com/semicoder-dev/fn-plugins) 使用 GitHub Releases 分发归档；[schema 3 市场索引](https://raw.githubusercontent.com/semicoder-dev/fn-plugins/main/marketplace.json) 提供固定下载地址、摘要与兼容版本。旧译文、随手记、网络搜索不在本版市场，历史 schema 2 索引仅供旧宿主使用。
 

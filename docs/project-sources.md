@@ -1,5 +1,13 @@
 # 项目资料与发布状态
 
+## 2026-10-31：看板与模型目录 0.1.1
+
+fn-plugins `ab73be41a99e4f81cb8d181b5ba4094dd973bf93`，固定 `kanban-v0.1.1` 与 `models-dev-v0.1.1`；[主干 CI 41179848455](https://github.com/semicoder-dev/fn-plugins/actions/runs/41179848455) 成功。看板归档 63,015 字节，SHA-256 `3d3375e93acd1c5113d37d7264c775c4b42287de1dc7044bac562ee5c3fb6e5f`；模型目录 19,729 字节，SHA-256 `770a7c9ab812a82f9ea7037508b22c6e8876a0603b648e3674bd3ab7323b4836`。两个 Release 的匿名下载归档、摘要附件与本地冻结重建逐字节匹配，旧 0.1.0 归档未改写。
+
+来源为看板 `src/{client.tsx,labels.tsx,style.module.css}` 和模型目录 `src/style.module.css`；收紧表单、筛选、标签、归档与价格弹窗的重复留白，修复标签焦点。后端、数据格式、共享 UI、SDK 0.5 和应用 0.6.1/build 14 均不变。24 测试/110 断言、检查、仓库外冻结重建、公开宿主隔离更新与完整数据/epoch 保留、浏览器明暗/560px/焦点/滚动、原生看板弹窗与内层菜单验收通过；未扩大为原生价格逐项复验。
+
+市场 `9acef88` 在公开归档核验后登记。本站同步插件管理、安装、版本边界、故障与浮层开发说明；无需重新下载应用，已有 0.1.0 从插件市场检查更新。官网质量、预发布与生产部署仍待本次源码推送后独立验收。
+
 ## 2026-10-31：fn 0.6.1 插件热更新
 
 fn `d65cc44a3c25cb9cfa77b2f619f53efeed1ca44f` / `v0.6.1`，build 14。正式签名公证流程 [41176819217](https://github.com/semicoder-dev/fn/actions/runs/41176819217) 成功，公开 DMG 74,772,690 字节，SHA-256 `7f271d0e201e36a7cb23651239dd6baa0f8fbb517536c1e1e4cfc1743f8f48bc`；五附件摘要、Developer ID、Apple 公证和 Gatekeeper 独立核验通过。
