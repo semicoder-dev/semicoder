@@ -10,12 +10,14 @@ date: "2026-10-31"
 
 ## 官方市场
 
-官方市场使用 [schema 3 索引](https://raw.githubusercontent.com/semicoder-dev/fn-plugins/main/marketplace.json)，提供看板和模型目录 0.1.0，适配 SDK 0.5.0。
+官方市场使用 [schema 3 索引](https://raw.githubusercontent.com/semicoder-dev/fn-plugins/main/marketplace.json)，提供看板和模型目录 0.1.1，适配 SDK 0.5.0。
 
 - **看板**：多个看板、列表和卡片拖动、共享标签、截止日期、检查清单、搜索、归档与恢复；数据保存在本机。
 - **模型目录**：浏览 models.dev 的模型规格、能力和供应商报价，支持搜索、筛选、排序、分页与本地缓存。
 
 刷新市场后安装。宿主核对精确共享依赖版本与归档 SHA-256，不兼容的包不能安装。旧译文、随手记和网络搜索不属于本版市场。
+
+0.1.1 收紧看板表单、筛选、标签和归档弹窗的重复留白，修复标签弹窗焦点返回，并统一模型价格详情的段落间距。已安装 0.1.0 时，在「插件市场」检查更新，分别点击两个插件的「更新」；现有看板和目录缓存保留，无需重新下载 fn。发行说明：[看板 0.1.1](https://github.com/semicoder-dev/fn-plugins/releases/tag/kanban-v0.1.1)、[模型目录 0.1.1](https://github.com/semicoder-dev/fn-plugins/releases/tag/models-dev-v0.1.1)。
 
 ## 其他来源与更新
 
