@@ -38,3 +38,7 @@ fn plugin pack ./my-plugin
 也可从 `@semicoder/fn-sdk/build` 调用 `inspectPlugin`、`buildPlugin`、`packPlugin`。把输出归档安装到 fn Dev 或隔离 Preview，验证菜单/弹窗焦点、明暗、窄窗、重启持久化及卸载清理，再公开归档。
 
 继续阅读[包配置](/fn/docs/plugin-manifest)、[后端 API](/fn/docs/plugin-backend-api)、[前端 API](/fn/docs/plugin-client-api)与[分发](/fn/docs/plugin-distribution)。
+
+## 热更新生命周期
+
+fn 0.6.1 保留 SDK 0.5.0，普通外部插件支持局部更新。将注册、事件监听、定时器和数据库连接绑定 Cordis effect，在停用或替换时完整释放；避免模块顶层启动长期副作用。插件持久数据自行管理，被替换组件的临时状态不保证保留。新增 hotReload 声明的 SDK 构建支持尚未发布，当前 SDK 0.5.0 不接受此字段。

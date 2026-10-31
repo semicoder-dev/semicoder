@@ -14,14 +14,14 @@ start: { "label": "下载与安装", "doc": "docs-fn-installation" }
 
 ## 由插件组合的小应用
 
-fn 0.6.0 使用 Bun/FIA 与原版 Cordis，把应用中心、设置、模型服务和界面组合为独立插件。启动进入应用中心，按需安装自己的工作流。
+fn 0.6.1 使用 Bun/FIA 与原版 Cordis，把应用中心、设置、模型服务和界面组合为独立插件。启动进入应用中心，按需安装自己的工作流。
 
 ## 从看板和模型目录开始
 
 - 看板管理多个看板、列表、卡片、共享标签、截止日期、检查清单和归档，数据保存在本机。
 - 模型目录浏览 models.dev 的模型规格、能力和供应商报价，支持搜索、筛选与缓存。
 - 两个官方插件均无需 API Key；需要模型能力的其他插件可使用独立模型连接。
-- 全部页面共享原版 dsh 控件与浅色、深色主题，插件变更在后台空闲后生效。
+- 全部页面共享原版 dsh 控件与浅色、深色主题，普通插件变更在后台空闲后局部生效，不刷新整个页面；不安全变更才重启。
 
 从[下载与安装](/fn/docs/installation)开始，再阅读[第一次使用](/fn/docs/getting-started)。本版暂不提供 Chat 页面或手机聊天同步。
 
@@ -29,4 +29,4 @@ fn 0.6.0 使用 Bun/FIA 与原版 Cordis，把应用中心、设置、模型服�
 
 SDK 0.5 提供普通 Cordis 插件的构建工具与类型化客户端。后端可直接运行 TypeScript，前端使用共享 React、fn-ui 和布局插槽。通过 `fn plugin check/build/pack` 检查并分发 npm 格式插件包。
 
-阅读[插件开发](/fn/docs/plugin-development)和[架构](/fn/docs/cordis-preview)。0.6 与旧 SDK/插件不兼容，需要完整 DMG；旧连接和数据不自动迁入，旧文件保留。
+阅读[插件开发](/fn/docs/plugin-development)和[架构](/fn/docs/cordis-preview)。从 0.6.0 升级使用完整 DMG，保留现有插件和数据。0.5.x 及更早版本需重新配置连接和插件，旧文件保留。
