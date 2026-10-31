@@ -13,38 +13,6 @@ featured: true
 start: { "label": "安装 FIA", "doc": "docs-fia-installation" }
 ---
 
-## 一份能力，多种入口
+FIA 用一套 TypeScript 契约提供 macOS 原生窗口、Bun 后台、浏览器入口、CLI 和脚本 SDK。当前源码使用 Bun 1.4.4 构建与格式化，提供动态状态栏和受管理进程组。
 
-桌面上的按钮、终端里的命令、agent 执行的脚本，应当调用同一份业务逻辑。FIA 从共享 API 出发，为应用同时提供桌面与浏览器界面、CLI、TypeScript 脚本 SDK 和随应用更新的 skill。
-
-你用 React 编写界面，用 TypeScript 实现业务；预编译 Swift Host 提供原生窗口和系统能力，Bun 运行后端。应用开发不需要维护 Swift 工程。
-
-## 为桌面工具而生
-
-- **一次声明，共同使用**：Zod schema 描述输入、输出和事件，界面、CLI 与脚本共享类型和运行时校验。
-- **原生桌面外壳**：WKWebView、窗口、菜单栏、剪贴板、文件对话框和钥匙串等能力通过 Native SDK 调用。
-- **熟悉的开发体验**：React + Vite 热更新、受控后端重启，以及连接同一宿主的完整浏览器界面。
-- **独立运行的应用**：构建产物自带 Bun，使用者无需安装 Node.js 或 Bun。
-- **可确认、可回退的更新**：前后端代码一起签名分发，用户确认后切换，启动失败恢复上一版代码。
-
-## 开始构建
-
-支持 **macOS 14 及以上、Apple Silicon**。先安装 Bun，再创建项目：
-
-```bash
-bunx @semicoder/fia@0.18.0 create my-app --yes
-cd my-app
-bun run dev
-```
-
-查看 [完整安装步骤](/fia/docs/installation)，或从 [共享 API](/fia/docs/shared-api) 了解核心设计。
-
-## 框架与应用一起生长
-
-[fn](/fn) 是基于 FIA 构建的插件应用平台：FIA 负责窗口、原生能力与开发分发；fn 负责模型服务、插件 SDK、存储和应用页面。两者各自演进，也通过真实应用需求改进设计。
-
-## 版本说明
-
-FIA 4 表示架构代际，npm 包当前为 **0.18.0**。本站教程面向这个已发布版本，新增原生标题栏置顶，包含默认浏览器入口、原生外观、登录回调、应用子命令、隔离预览和 DMG 分发。原名麻辣烫 0.4.0 使用同一份 FIA 0.18.0 公开归档，已接入置顶按钮。见 [构建与分发](/fia/docs/distribution)。
-
-截至 2026-10-09，[源码仓库](https://github.com/semicoder-dev/fia) 已公开，正式包通过 [npm](https://www.npmjs.com/package/@semicoder/fia) 获取。
+源码通过固定本地归档验证；公开发行另行执行。阅读[安装](/fia/docs/installation)、[开发](/fia/docs/development)和[共享 API](/fia/docs/shared-api)。

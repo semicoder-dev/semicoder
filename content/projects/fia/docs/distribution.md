@@ -1,64 +1,13 @@
 ---
 id: "docs-fia-distribution"
 slug: "distribution"
-title: "构建、版本与分发"
-description: "区分 npm 发行版、fn 固定框架构建和最终应用安装包。"
-date: "2026-10-09"
+title: "构建与分发"
+description: "固定运行时、代码产物、签名与验收。"
+date: "2026-10-31"
 ---
 
-## 当前可获取的版本
+fia build 生成应用，build --dmg 生成并验收本地镜像。fia release 使用 Developer ID 签名、公证并检查 Gatekeeper；正式发布需要明确授权与 Apple 配置。
 
-核对日期：2026-10-09。
+固定运行时包含 Swift Host、CLI 客户端与 Bun 1.4.4；代码产物包含后台、页面和资源。用户数据写 context.app.dataDirectory。原生能力、权限或内置运行时变化需要完整安装包。
 
-| 产物                      | 获取方式                                                              | 范围                                                                    |
-| ------------------------- | --------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| FIA npm 0.18.0            | [npm](https://www.npmjs.com/package/@semicoder/fia)                   | 新增原生标题栏置顶；包含默认浏览器界面、隔离预览、应用子命令和 DMG 分发 |
-| 历史应用使用的 FIA 0.18.0 | [框架归档](https://github.com/semicoder-dev/fia/releases/tag/v0.18.0) | 源码 `85206f6f5322`，与公开 npm 0.18.0 和 Actions artifact 逐字节一致   |
-| fn 应用                   | [下载与安装说明](/fn/docs/installation)                               | 0.4.4 / build 8；macOS 14+ / Apple Silicon                              |
-
-框架归档 `.tgz` 是开发依赖，不是双击安装的应用。FIA 4 的“4”也不是 npm 版本号。
-
-## 本机构建
-
-```bash
-bun run check
-bun run build
-```
-
-`fia build` 生成本机 `.app`，包含固定的原生宿主、Bun、CLI 与业务资源。普通使用者不需要另装运行时。本机构建不等于已通过 Developer ID 签名和公证的公开发行包。
-
-## 公开应用分发
-
-FIA 0.17.0 的 `fia build --dmg` 创建本机测试镜像；`fia release` 对应用和 DMG 签名、公证，并检查镜像内应用，输出 DMG、SHA-256 与报告。配置 `signing.releaseIdentity` 与 `signing.notarizationProfile` 后执行项目中的 `bun run release`。签名身份为 Developer ID Application；证书、公证凭据由发布者准备，不进入仓库。fn 共仓工具链要求包含在资源归档中的 Mach-O 依赖先签名、再压缩和计算摘要；Apple 最终状态须为 `Accepted`，拒绝时读取 issue 日志并停止；隔离启动失败保留最后状态与日志，不能通过跳过检查发布。
-
-历史 npm 0.16.1 的 `fia release` 输出 ZIP；当前 0.18.0 教程保留上述 DMG 行为。已有应用升级至新原生宿主须通过完整安装包交付。
-
-## 签名代码更新
-
-FIA 支持前后端代码一起更新。先生成 Ed25519 密钥，把公钥和更新源放入应用配置，私钥由发布环境保管。
-
-```bash
-bunx fia update keygen --output /secure/path/my-app-keys
-FIA_UPDATE_PRIVATE_KEY_FILE=/secure/path/my-app-keys/update-private.pem bunx fia release --update
-```
-
-每次提高 `app.version` 和 `app.build`。将 `dist/updates/releases/<build>/` 上传到对应 HTTPS 地址，最后发布 `latest.json`。CLI 生成产物，不自动上传。
-
-## 更新边界
-
-- 下载后由用户确认生效；活动调用、脚本或 `beforeUpdate` 报忙会推迟切换。
-- 启动或观察失败回退代码；用户数据不会一起回退，数据迁移需兼容旧代码。
-- 原生宿主、Bun、系统权限或其他运行时配置变化，需要完整安装包。
-- 应用业务依赖需能打包为 JS/TS、静态资源或 WASM；不能把额外原生可执行文件当成普通代码热更新。
-
-安装入门从 [快速开始](/fia/docs/installation) 继续；生产行为以所用包内框架契约为准。
-
-### 固定运行时资源（fn 共仓版本）
-
-共仓源码支持 `runtime.assets`：声明的普通文件只复制到完整应用的 `Contents/Resources/runtime`，文件路径和实际复制快照的 SHA-256 纳入 `runtimeId`。`release --update` 不携带这些文件，修改归档或其他固定资源后须重新分发完整安装包。普通代码更新的原生文件、符号链接、文件数量及大小限制保持不变。
-
-此功能尚未包含于公开 FIA npm 0.18.0；未使用 `runtime.assets` 的应用保留原有运行时身份计算。使用方式见 [资源与数据](/fia/docs/development#资源与数据)。
-
-## CloudKit 签名支持（开发中）
-
-fn 共仓源码已增加按开发、预览、正式模式分别配置应用 entitlements 和 provisioning profile 的能力，并提供 macOS/iOS 共用 Swift 传输包及原生 CloudKit 桥，包括 zone 静默变更订阅、按记录类型的创建提醒和幂等退订。业务应用自行维护消息协议、outbox 与同步游标，不能将推送作为可靠事件日志。此功能尚未包含于公开 FIA npm 0.18.0；本机 fn Beta 的 Developer ID 签名与生产 CloudKit 同步已通过，fn 0.5.0 公开签名安装包的公证、Gatekeeper、生产权限及隔离启动已通过独立验收。本页现有公开安装与发行路径保持不变。
+CloudKit 按构建模式指定 entitlements、profile 和容器白名单。模拟器和普通 ad-hoc 包不能代替签名真机验收。框架归档必须完成独立安装、应用构建和运行检查，报告使用摘要记录实际内容。

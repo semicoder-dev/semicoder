@@ -1,37 +1,15 @@
 ---
 id: "docs-fn-plugin-backend-api"
 slug: "plugin-backend-api"
-title: "后端 API"
-description: "服务注入、动态命名空间与插件独立持久化。"
+title: "后台 SDK"
+description: "defineBackend、数据目录与聊天。"
 date: "2026-10-31"
 ---
 
-SDK 0.5 不提供集中应用 Context。后端直接使用 Cordis `Context`，模型、任务、Session、RPC 等服务的类型来自所属插件。
+`defineBackend({api,setup({host})})` 注册后台。setup 返回 handlers、可选 chat 和 stop。方法输入输出由 Zod 契约验证；流式方法返回 AsyncIterable，CallContext 包含 signal、requestId 与可选 viewId。
 
-## 定义与注册接口
+host.paths 提供 data/cache/logs。应用使用 Bun SQLite 或文件保存业务数据，不写入不可变安装目录。host.models 提供目录、默认模型和 Responses；host.widgets.publish 发布完整快照；host.ui 提供定向 Toast/确认。
 
-```ts
-import type { Context } from "@deepseek-ai/cordis";
-import { defineAPI, implementAPI, z } from "@semicoder/fia/api";
-import type {} from "@semicoder/fn-rpc";
+chat 的键匹配 manifest 聊天 ID。处理器取得 message、signal、reply，调用 `reply.complete({text})` 持久提交最终回复。手机入口没有 viewId，不能等待页面确认弹窗。
 
-const contract = defineAPI({
-  methods: {
-    read: { description: "Read status", input: z.object({}), output: z.string() },
-  },
-});
-export const inject = ["rpc"];
-export function apply(ctx: Context) {
-  ctx.rpc.register("example", implementAPI(contract, { read: () => "ready" }));
-}
-```
-
-真实项目将 contract 放在浏览器安全的独立文件并导出，服务包声明 `@semicoder/fia`、`@semicoder/fn-rpc` 等实际 peers。命名空间应按实例策略选择，避免不同实例冲突。注册绑定 Cordis 生命周期，卸载关闭入口并取消在途调用。
-
-## 持久化与任务
-
-注入 `host` 后，以 `ctx.host.dataDirectory` 下的插件专属目录保存业务 SQLite 或文件；插件负责 schema 和一致性。看板示例使用 `fn-kanban/kanban-v2.sqlite`。没有公开全局 KV，也没有 SDK 网页搜索接口。
-
-后台工作通过 `fn-activity` 登记，例如 `ctx.activity.run(async () => ...)`，使运行组合在忙碌时等待。数据库、监听器和网络请求通过 `ctx.effect` 注册清理；窗口关闭和后台任务取消是不同生命周期。
-
-模型、Session、Agent 和工具契约分别从对应 fn 插件与原版 dsh 获取。插件是可信本地代码，Cordis scope 用于服务组织，不是进程安全沙箱。
+stop 关闭数据库、定时器和业务资源。宿主先取消请求，再给清理期限，最后终止进程组。不要把进程独立误认为系统权限沙箱。

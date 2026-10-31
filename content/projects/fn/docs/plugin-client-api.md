@@ -1,37 +1,18 @@
 ---
 id: "docs-fn-plugin-client-api"
 slug: "plugin-client-api"
-title: "前端 API"
-description: "类型化客户端、插槽与导航。"
+title: "页面 SDK"
+description: "类型化调用、模型、取消与窗口。"
 date: "2026-10-31"
 ---
 
-客户端是 Cordis 插件，导出 `inject` 和 `apply`。SDK 0.5 的 `./client` 提供 `client`、`readAllPages`，不再提供聚合 clientApp。
+通过 `connectView(contract)` 创建页面客户端，并用 `ApplicationProvider` 包裹页面。只在 Fn 提供的页面入口中连接，不自行拼接后台端口。
 
-## 调用后台
+- `view.call(name,input,{signal})` 调用自身后台普通方法。
+- `view.stream(name,input,{signal})` 返回异步流，取消或断开视图会传递到后台。
+- `view.models.list/default/responses` 使用宿主模型；Responses 连接参数在 options。
+- `view.ui.toast(text)` 与 `view.ui.confirm(text)` 定向当前视图。
+- `view.application.close/minimize/maximize` 操作当前应用；编辑器调用 `useUnsavedChanges(view,dirty)`。
+- `useI18n(view)` 提供 locale/t；词条在应用包中，主题与语言由宿主下发。
 
-将契约放在共享 `contract.ts`：
-
-```ts
-import { client } from "@semicoder/fn-sdk/client";
-import contract from "./contract.ts";
-const remote = client(ctx, "example", contract);
-const status = await remote.call("read", {});
-```
-
-具体调用语法以契约生成的类型为准。前端依赖 `platform` 和 `api:example`，避免服务尚未注册就挂载页面。分页通过 `readAllPages` 或响应游标读取；订阅与异步任务应在 effect 清理时释放。
-
-## 注册界面
-
-```tsx
-import type { Context } from "@deepseek-ai/cordis";
-import type {} from "@semicoder/fn-ui-layout/contract";
-export const inject = ["slots", "layoutSlots"];
-export function apply(ctx: Context) {
-  ctx.slots.register({ name: "fn.status", id: "example" }, () => <span>示例已连接</span>);
-}
-```
-
-布局提供 `fn.sidebar.top`、`fn.sidebar.bottom`、`fn.toolbar`、`fn.status`、`fn.overlay` 列表插槽，以及按 key 选择的 `fn.main`。插槽类型来自 dsh slots 和布局 contract。
-
-完整页面可使用 `@semicoder/fn-ui-navigation/view` 的 `NavigationButton`、`useNavigation`，注入 `navigation` 后以路径进入对应 `fn.main` 页面。参考官方看板的首页/详情路径；不要创建宿主之外的路由系统。
+关闭标签页只断开视图，显式关闭应用才停止后台。停止或更新后的视图失效，不能继续使用陈旧凭证。详情与可运行示例见[应用开发](/fn/docs/plugin-development)。

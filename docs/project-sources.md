@@ -1,5 +1,39 @@
 # 项目资料与发布状态
 
+## 2026-11-01 Fn 0.7 发行
+
+用户授权桌面 Fn 0.7.0/build 15、SDK 0.6.0、UI 0.1.0、翻译/笔记/看板 0.2.0 与官网发行，手机正式版后移。安装入口须在公开 DMG 验收后部署；产品指南只介绍当前架构和操作。
+
+- Fn 标签 `v0.7.0` 与 `sdk-v0.6.0` 固定 `22615f4f17285bfd40e55ab82a0b3c94e11a4e7a`。完整主干 CI 41217985870、SDK/UI 流程 41217989599 成功；20 测试/151 断言、FIA 91 CLI/48 Swift、独立框架构建消费通过。
+- SDK 0.6.0 经 OIDC/provenance 发布；UI 0.1.0 首次由维护者验证发布同一 CI 包，无 provenance。匿名公开归档与 CI 一致：SDK SHA-256 `ebbdf82187f1eb295427aee820336d8101c22f8916320bea09bfeffc734be530`，UI `5bca955170cb942894433c88379aec9568f007860cf8c7a88dc2cbfde03db728`。UI 受信任发布者已配置，但真实自动发布尚未验证。
+- 应用 `apps-v0.2.0` 固定 `372dca76c95ecd34514aca63f01cf5d19404444a`，41219139196 成功。三包与 Pages schema 1 市场已公开，匿名摘要一致；仓库外从公开 npm 冻结安装、15 测试/73 断言、构建打包通过。
+- 签名候选实际通过应用中心安装三包，浏览器笔记保存、原生看板单行样式与创建、重启数据/布局保留、默认关闭和退出进程清理通过。正式模式隐藏手机入口，不连接 CloudKit。
+- [正式发行 41219449863](https://github.com/semicoder-dev/fn/actions/runs/41219449863) 成功；五个附件已匿名下载。DMG 45,799,189 字节，SHA-256 `c439990bc3efd8d0256c11d5375d0fcb6ce440ae9b1362cc51e00d1f0585ccc9`；镜像校验、公证票据、深签名和 Gatekeeper 通过。在线签名清单与全部 12 个文件与公开安装包一致，旧 build 14 更新抽检未改写。公开包隔离原生启动、三个应用恢复为关闭状态、看板数据恢复通过。runtime ID `9e9b01d32a05b36e6dcb1833a9547ae1fcc0526f99251208ef4cd3b987122cb8`。
+
+网站工具链保持独立，FIA 共仓构建、独立 npm 不更新。官网全量检查、51 单元/175 断言、12 Workers、生产构建与 41 个静态页面检查通过；推送后的两环境部署及线上验收单独记录。
+
+下方保留本轮实施与历史发行来源，不作为当前公开版本的替代证据。
+
+2026-10-31，Fn UI 集中参考 dsh 原版明暗色值（参考源码 687f282e8625c6b8d11ff58211a90524be2e4317），不依赖其运行包。来源为 packages/ui/src/theme.css、ui.module.css、frontend 的主题去重与图标/Dock 消费；标准 UI 指南同步。Fn check/build、SDK/UI 与官方应用独立消费、三应用明暗和宿主系统主题/窄窗/原生通过；三个本地应用已正常更新且业务文件摘要不变。固定 SDK `3ae7c4276d0a`、UI `342598b8c920`；未发布或部署。
+
+2026-10-31，Fn 网格采用基准 240px 列宽与横向余宽均分，行高不变，末行沿用同一列宽并保留完整空格位。来源仅 frontend/platform.module.css；小组件与首次使用指南同步，单值 size 契约不变，不需要重建 SDK 或官方应用。Fn check/build、浏览器 10 个宽度/跨列预览与原生 Dev 通过；未发布或部署。
+
+2026-10-31，用户确认每个小组件采用单个固定 size（例如 `"2x2"`）。官网小组件、应用定义、开发和首次使用指南同步；SDK schema、宿主与 renderer 移除尺寸集合和用户尺寸覆盖。Fn 15 测试/140 断言、官方应用 15 测试/73 断言、构建、SDK/应用仓库外消费、浏览器/原生及 CLI 固定 3x1 预览通过。当前 Fn Dev 三应用更新并核对业务数据不变；固定归档前缀 SDK `d42534c9bdfd`、UI `ce0ed0d3ba8b`，未发布或部署。
+
+## 2026-10-31 Fn 多应用平台本地实现
+
+小组件采用插件声明的网格 sizes（例如 1x1、2x1、2x2），每格 240px、间距 12px，固定尺寸靠左排列；宿主提供尺寸菜单、持久化和声明校验，CLI 预览复用正式规则。来源为 Fn SDK manifest/widgets/types、宿主 store/index、frontend 与 commands/plugin；Fn 15 测试、官方应用 15 测试、SDK/应用独立消费及隔离原生/浏览器验收通过。固定本地 SDK 摘要前缀 933008d368ae、UI 1c073930e354；首次使用、应用定义/开发和小组件指南同步。用户追加授权后，当前 Fn Dev 三个应用已正常更新，业务文件摘要及桌面偏好不变，实际尺寸切换通过。未发布或部署。
+
+桌面布局按用户追加要求改为单行搜索/整理/添加应用工具栏；应用、通知、设置常驻 Dock 并打开弹窗，普通运行应用由竖线分隔。手机消息从设置进入。来源为 Fn `frontend/main.tsx`、`desktop.module.css` 和 `platform.module.css`；首次使用、应用、模型和手机指南同步，本地未发布。
+
+开发入口补验：Fn `framework/fia/packages/cli/src/web.ts` 对本机 HTTP/SSE/WebSocket 显式禁用环境代理，修复 `bun dev` 原生启动卡住。91 Bun / 3 XCTest / 48 Swift、独立框架消费、Fn check/build，以及保留代理的实际 Dev 原生和浏览器通过。FIA 开发指南、Fn 安装页同步直连行为和三个本地包体验路径；未发布或部署。详见 workspace `docs/agent/sessions/2026-10-31-fn-dev-loading.md`。
+
+用户授权完整重构。Fn/FIA/SDK、独立官方应用及手机文字中转源码在 codex/fn-application-platform；本地未发布，版本号不作为公共产物证据。官网 Fn 指南重写为当前契约和本地预览入口，FIA 更新 Bun 工具链与生命周期契约。未推送或部署，网站工具链保持不变。
+
+已在隔离 Fn QA 完成真实 ChatGPT 登录、浏览器与原生翻译，FIA 48 项 Swift 检查及真实 Bun 应用隔离测试通过；最终完整验收记录在 Fn docs/ui-validation.md。设备连接后，iPhone 17 Pro Max 与开发 CloudKit 核心文字链路通过：离线等待、关闭不唤醒、启动处理、最小化、中断重试、去重和跨重启补送，1,421 字符译文逐字一致。超长回复跨记录分片、后台静默推送、锁屏通知及点击恢复仍待补充；生产 schema/签名/TestFlight 未执行。来源为 workspace `docs/agent/sessions/2026-10-31-fn-phone-validation.md`；本轮官网仍仅修改本地内容。
+
+下方为历次已核实发行事实，不表示本次内容已经公开。
+
 ## 2026-10-31：看板与模型目录 0.1.1
 
 fn-plugins `ab73be41a99e4f81cb8d181b5ba4094dd973bf93`，固定 `kanban-v0.1.1` 与 `models-dev-v0.1.1`；[主干 CI 41179848455](https://github.com/semicoder-dev/fn-plugins/actions/runs/41179848455) 成功。看板归档 63,015 字节，SHA-256 `3d3375e93acd1c5113d37d7264c775c4b42287de1dc7044bac562ee5c3fb6e5f`；模型目录 19,729 字节，SHA-256 `770a7c9ab812a82f9ea7037508b22c6e8876a0603b648e3674bd3ab7323b4836`。两个 Release 的匿名下载归档、摘要附件与本地冻结重建逐字节匹配，旧 0.1.0 归档未改写。

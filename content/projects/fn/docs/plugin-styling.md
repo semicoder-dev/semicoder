@@ -1,22 +1,13 @@
 ---
 id: "docs-fn-plugin-styling"
 slug: "plugin-styling"
-title: "样式与主题"
-description: "CSS Modules、语义 token 和共享资源生命周期。"
+title: "主题与样式"
+description: "CSS Modules、语义变量与本地化。"
 date: "2026-10-31"
 ---
 
-适用于 fn 0.6。样式采用 CSS Modules，使用宿主原版 dsh `--dsw-*` 语义变量；不引入 Tailwind、Base UI、旧 SDK 主题或第二份 UI 样式。
+使用 CSS Modules，复用 Fn UI 的语义变量和组件。Bun 构建负责 CSS Modules 合并，开发与生产使用同一路径。不要引入额外 CSS 框架或依赖宿主内部样式类。
 
-```tsx
-import styles from "./style.module.css";
-export function Panel() {
-  return <section className={styles.panel}>内容</section>;
-}
-```
+主题为 light/dark/system，语言为 en/zh-CN。ApplicationProvider 接收宿主偏好；业务文案写入 locales，使用 useI18n。应用名称与小组件文本也可引用词条，用户内容不翻译。
 
-需要共享布局类时可使用 fn-ui 的 `classes(local, ...values)`，优先解析局部和共享 layout 模块。具体 token 从固定版本的主题中选择，不猜测不存在的变量。
-
-客户端构建将样式关联到插件生命周期；卸载清理样式和注册，不向 document 写永久全局规则。禁止全局覆盖 button、input、dialog 等控件。
-
-主题仅浅色、深色、跟随系统。业务数据颜色（例如看板标签）可使用有明确含义的独立色板，但应保证明暗可读性。验收包含窄窗、键盘焦点、弹层材质与减少动态效果。
+检查明暗对比、窄窗口溢出、键盘可达、菜单弹窗焦点恢复与 prefers-reduced-motion。小组件仅允许预定义语义样式和尺寸，不接受任意 CSS。

@@ -1,25 +1,13 @@
 ---
 id: "docs-fn-plugin-ui-overlays"
 slug: "plugin-ui-overlays"
-title: "菜单与弹窗"
-description: "沿用原版 Menu 和 Modal 的焦点、键盘与层级行为。"
+title: "弹窗与通知"
+description: "视图定向、关闭取消与焦点恢复。"
 date: "2026-10-31"
 ---
 
-fn 0.6 使用 `@semicoder/fn-ui` 的原版 dsh Menu、Modal、Tooltip。旧 SDK Base UI 的 Root/Trigger/Content 组合不适用于本版。
+`view.ui.confirm(text)` 返回 `Promise<boolean>`，使用标准 Fn 确认界面；`view.ui.toast(text)` 显示当前视图通知。后台传 CallContext.viewId 定向通知或确认，不能假设每个任务都有页面。
 
-## 菜单
+视图消失时未决确认取消。关闭应用存在执行任务或未保存内容时由宿主协调一次确认。应用编辑器使用 `useUnsavedChanges` 登记；嵌套编辑区域分别登记，避免子弹窗关闭清除父编辑状态。
 
-Menu 通过 `anchor`、`items`、`open`、`onClose` 和 `onSelect` 组合。使用受控状态，按需设置 `portal`、`autoFocus` 和 `selectedId`；准确属性以固定契约类型为准。共享 Select 已封装单选字段的 Menu 和焦点处理。
-
-WebKit 点击按钮不一定自动聚焦，打开菜单时应保留可恢复的触发元素。不要用手写全局监听替代控件键盘行为，也不要靠任意高 z-index 掩盖层级问题。
-
-## 弹窗
-
-使用 Modal 提供标题、内容与操作；提交、取消和关闭保持一致。异步保存期间显示可理解的状态，错误留在用户仍可操作的位置。嵌套菜单应正确处理 Escape：关闭当前弹层后把焦点交回合适的触发元素。
-
-Modal 已提供标题与正文间距。业务表单用局部容器的 `gap` 统一字段间隔，字段与提示段落显式设置 `margin`，避免再次叠加顶部留白或 flex 子项外边距；空列表没有内容时不保留占位。初始输入用 `data-modal-autofocus`，让 Modal 正确记录关闭后应返回的触发元素。
-
-## 验收
-
-检查鼠标与键盘开启、方向键、Enter、Escape、Tab、点击外部关闭和焦点返回；同时验证明暗、窄窗口、内容滚动、菜单阴影及模糊材质。CSS Modules 只处理业务布局，不覆盖原版控件的全局选择器。官方看板标签编辑与卡片详情可作完整参考。
+Modal 支持键盘 Escape、焦点约束与恢复。复杂编辑可使用应用 Modal，但数据保存和脏状态仍由业务管理。

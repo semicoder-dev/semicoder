@@ -2,27 +2,12 @@
 id: "docs-fn-plugin-distribution"
 slug: "plugin-distribution"
 title: "构建与分发"
-description: "固定完整插件归档，验证后登记 schema 3 市场。"
+description: "冻结依赖、归档、摘要与市场。"
 date: "2026-10-31"
 ---
 
-适用于 fn 0.6 / SDK 0.5。后端 ESM TypeScript 可由 Bun 运行；客户端必须先通过 SDK 构建为原版模块 factory。发行包包含源码入口、客户端产物、样式、图标和必要数据文件。
+使用 `fn plugin check/build/pack .`。`.fn-build/` 是构建目录，`<id>-<version>.fn.tgz` 在应用根生成。归档包含后台 TypeScript、冻结运行依赖、构建后的页面、词条、小组件和资源。前端打包自身的 React、SDK 和 Fn UI。
 
-```sh
-fn plugin check ./my-plugin
-fn plugin build ./my-plugin
-fn plugin pack ./my-plugin
-```
+应用使用精确的 SDK 0.6.0 与 Fn UI 0.1.0 npm 版本，开发工具必须在 workspace 外验证。安装不运行依赖脚本。市场 schema 1 的 applications 数组包含 id、version、name、description、url、sha256；远端使用 HTTPS。发布前独立下载并验摘要。
 
-## 发布顺序
-
-1. 固定源码和依赖，完成检查、业务测试、独立构建及隔离宿主交互验收。
-2. 将完整 npm 格式 tgz 发布到不可变的 HTTPS 地址，保存 SHA-256。
-3. 从公开地址重新下载并核对摘要、元数据及实际安装。
-4. 最后将通过验证的归档登记到 schema 3 市场。
-
-索引包含 `schemaVersion: 3`、市场名称与 `plugins` 数组；每项提供 `packageName/name/description/version/url/sha256/peers` 及可选图标。`peers` 与包中声明一致；URL 不含凭证，版本已公开后不覆盖文件或移动标签。
-
-官方例子见[marketplace.json](https://github.com/semicoder-dev/fn-plugins/blob/main/marketplace.json)。旧 schema 2 使用 applications/core，不能替代新格式。宿主会按真实归档和共享内核校验兼容性，不以市场显示可用代替安装验证。
-
-插件包与应用安装包分别发行。安装或更新在后台空闲时生效；变更数据库格式前先定义插件自己的数据策略，不覆盖用户正在运行的目录。
+更新时目标应用先确认关闭，再切换不可变目录；页面与后台来自同一版本，其他应用继续运行。代码和数据分离，失败不改变有效安装。官方市场发布、npm、GitHub Release 和网站部署均单独执行。

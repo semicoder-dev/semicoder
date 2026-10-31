@@ -1,34 +1,23 @@
 ---
 id: "docs-fn-plugin-manifest"
 slug: "plugin-manifest"
-title: "插件包配置"
-description: "npm exports、精确 peers 和 fn 元数据。"
+title: "应用定义"
+description: "fn.app.json、能力声明与入口。"
 date: "2026-10-31"
 ---
 
-适用于 SDK 0.5。包名建议为 `@semicoder/fn-<能力名>`。以下是后端加前端的基础结构；具体服务与 UI 依赖还须按实际使用补齐。
+`fn.app.json` 描述应用身份和宿主 API 契约，包名与应用 ID 使用小写。manifestVersion 与 hostApi 均为 1；应用版本使用 x.y.z。
 
-```json
-{
-  "name": "@semicoder/fn-example",
-  "version": "0.1.0",
-  "type": "module",
-  "exports": { ".": "./src/index.ts", "./client": "./dist/client.js" },
-  "files": ["src", "dist"],
-  "peerDependencies": {
-    "@deepseek-ai/cordis": "4.0.5",
-    "@semicoder/fn-sdk": "0.5.0"
-  },
-  "fn": { "name": "示例", "clientSource": "./src/client.tsx" }
-}
-```
+| 字段                | 含义                                            |
+| ------------------- | ----------------------------------------------- |
+| id / version / name | 身份、版本和名称，名称可引用词条                |
+| description / icon  | 可选说明与包内 SVG/PNG/JPEG/WebP                |
+| entries             | 可选 backend TypeScript 和 page TSX 入口        |
+| locales             | 默认 en 或 zh-CN，messages 指向包内 JSON        |
+| uses                | models.responses、widgets.publish、chat.receive |
+| contributes.widgets | 小组件 ID、固定网格 size、初始 JSON，最多 4 个  |
+| contributes.chat    | 可选聊天 ID 与名称，需要后台和 chat.receive     |
 
-删除 `./client` 为纯后端，删除 `.` 为纯前端。`fn` 元数据允许 `name`、`description`、`icon`、`iconSvg`、`clientSource`、`bundle`、`profile`；不使用旧应用 `schemaVersion/sdkVersion` 或 `keepAlive` 声明。
+入口均可选。没有页面时使用宿主状态页；无后台时不启动子进程。每个已安装应用一个普通实例，开发实例单独隔离。完整示例见[应用开发](/fn/docs/plugin-development)。
 
-`bundle/profile` 可指向包内 JSON 组合配置，沿用 Cordis Include 的插入/覆盖 patch 规则。包与实例分离，插件应明确是否支持多实例及命名空间配置。
-
-## 依赖与图标
-
-所有使用的共享模块声明精确 peer，私有依赖放在 dependencies。客户端不能打入第二份 React、Cordis、FIA 或 fn-ui。仅在 package.json 写相同版本号不足以证明构建输入一致，固定归档还须记录摘要。
-
-图标使用包内静态单色 SVG，通过 `currentColor` 跟随主题。官方示例将图标放在 `src/icon.svg` 并复制到发行目录；归档和市场索引必须包含一致的元数据。
+小组件的 `size` 声明唯一的列数 x 行数，例如 `"2x2"`，每个维度为 1–4。尺寸由插件决定，宿主按固定网格排列；改变尺寸需更新应用包。参见[小组件](/fn/docs/widgets)。

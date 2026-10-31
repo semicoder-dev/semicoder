@@ -1,27 +1,15 @@
 ---
 id: "docs-fn-models"
 slug: "models"
-title: "模型服务与账号"
-description: "为插件配置独立连接、凭证和已添加模型。"
+title: "模型与账号"
+description: "ChatGPT 订阅授权、可用模型与 Responses。"
 date: "2026-10-31"
 ---
 
-fn 0.6 以 `{connectionId, modelId}` 选择模型。模型、连接和账号目录由独立服务插件提供；默认发行没有聊天页或手机同步。
+点击底部 Dock 的「设置」，在模型页添加 ChatGPT 账号，通过官方授权页面登录。Fn 验证身份和权限，宿主持有凭证，应用只取得连接 ID。可查看账号可用模型，选择默认模型，重新连接或退出登录。
 
-## API Key 与订阅
+首期只支持官方 ChatGPT 账号订阅。模型目录以账号返回结果为准；额度限制明确显示错误。退出登录取消该账号在途请求，撤销凭证；网络导致远端撤销未确认时明确提示。
 
-从服务商预设创建连接，或配置兼容协议的自定义端点。API Key 和订阅登录在同一模型服务页面管理，同一服务商可建立多个独立连接。为连接设置清楚的名称，避免误选账号。
+应用调用 OpenResponses 请求与事件，连接 ID 和取消信号位于 Fn 调用上下文。`store:false`、`stream:true`、完整 input 数组为调用要求。不支持参数报错，收到完成终态才表示成功；中断和未完成不能伪装成完整结果。
 
-目录表示协议已知或当前账号返回的模型，不保证账号具有调用权限。添加模型不会发起生成请求；实际调用时才验证网络、额度和权限。缺少凭证不会借用其他连接或进程环境中的密钥。
-
-## 目录与会话绑定
-
-刷新所选连接的目录，然后添加需要的模型。插件应显式选择连接和模型；Session 绑定一个连接，更换账号或端点应创建新会话。删除已添加模型不会改写已有会话历史。
-
-「模型目录」官方插件是 models.dev 信息浏览器，与这里的已添加模型列表分开。它不读取凭证，不自动创建连接。
-
-## 凭证和升级
-
-凭证保存在权限受限的每连接文件中，不通过业务 API 返回前端。0.6 使用 `plugins-v1` 独立数据根，不能复制旧版 `platform.json` 或登录文件代替重新配置。
-
-已有连接的调用与持久化有开发验收记录；所有服务商的新账号登录、强制过期刷新和第二账号组合并未逐一实测。
+宿主管理传输和并发，应用负责上下文、工具执行与 Agent loop。参见[官方授权](https://developers.openai.com/siwc/token-sharing-open-source/sign-in)、[官方模型调用](https://developers.openai.com/siwc/token-sharing-open-source/models-and-inference)与[OpenResponses](https://www.openresponses.org/specification)。

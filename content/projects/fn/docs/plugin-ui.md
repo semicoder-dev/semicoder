@@ -1,35 +1,24 @@
 ---
 id: "docs-fn-plugin-ui"
 slug: "plugin-ui"
-title: "共享 UI"
-description: "使用宿主共享的原版 dsh 控件和组合组件。"
+title: "标准 UI"
+description: "Fn UI 与宿主主题语言。"
 date: "2026-10-31"
 ---
 
-fn 0.6 的 UI 从 `@semicoder/fn-ui` 导入，SDK 0.5 不再提供 `./ui`、主题和 Tailwind 导出。插件声明 fn-ui peer，由宿主提供同一份控件与 React。
+页面使用自有 `@semicoder/fn-ui`，包括 Button、Input、Textarea、Select、Checkbox、Menu、Modal、Toast、Notice、Surface、图标和布局。通过 ApplicationProvider 统一主题、语言和公共弹窗。
 
-## 控件
+页面可按业务设计，但应沿用组件尺寸、间距和语义颜色；遵守键盘、焦点恢复、窄窗与减少动态效果。全局 Toast 和确认默认只显示在发起视图；后台无视图通知进入宿主通知入口。
 
-共享导出包含 Button、Input、Checkbox、Switch、Menu、Modal、Tooltip、Tag、SegmentedControl 和图标；Select、Textarea、Notice、PageHeader、Surface、SettingsSection、SettingsRow 等组合组件同样由 fn-ui 提供。准确 props 以固定契约的类型为准。
+小组件不渲染应用 React。使用[JSON DSL](/fn/docs/widgets)，宿主和开发预览器共享 renderer。
 
-```tsx
-import { Button, Select, PageHeader } from "@semicoder/fn-ui";
-<PageHeader title="示例" actions={<Button onClick={save}>保存</Button>} />;
-<Select
-  label="状态"
-  value={status}
-  onValueChange={setStatus}
-  options={[
-    { value: "todo", label: "待办" },
-    { value: "done", label: "完成" },
-  ]}
-/>;
-```
+配色统一由 Fn UI 的 `src/theme.css` 定义，参考 dsh 的明暗设计：浅色白底、深色近黑底、中性主按钮、蓝色焦点和强调色。宿主与应用页面都消费 `--fn-*` 语义变量；背景、文字、边框、输入和弹窗颜色随主题切换，业务页面不要重定义全局主题。
 
-使用语义清楚的标签，图标按钮提供可访问名称。列表、表单和空状态由业务页面组合，不复制一份控件实现。
+| 用途                 | 变量                                               |
+| -------------------- | -------------------------------------------------- |
+| 页面 / 卡片 / 浮层   | --fn-bg、--fn-surface、--fn-surface-raised         |
+| 文字层级             | --fn-text、--fn-secondary、--fn-muted              |
+| 主按钮 / 焦点 / 强调 | --fn-accent、--fn-on-accent、--fn-focus、--fn-info |
+| 边框 / 分隔线        | --fn-border、--fn-line                             |
 
-## 布局与主题
-
-业务页面采用 CSS Modules，原版主题由 ui-base/ui-theme 统一加载。只提供浅色、深色和跟随系统；不恢复旧自定义颜色主题。布局适配窄窗口，避免页面和内部列表同时产生不必要的滚动条。
-
-官方看板展示了二级页面、密集工具栏、日期、标签和拖动交互；模型目录展示了筛选、分页和详情。见[弹层交互](/fn/docs/plugin-ui-overlays)和[样式规则](/fn/docs/plugin-styling)。
+组件尺寸和交互由 Fn UI 维护，宿主布局由自身 CSS Modules 管理。配色映射不需要 dsh 运行依赖；应用自包含打包 Fn UI，更新主题后应重新构建应用包。

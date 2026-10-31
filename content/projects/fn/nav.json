@@ -6,7 +6,7 @@
     },
     {
       "title": "使用指南",
-      "items": ["docs-fn-models", "docs-fn-plugins", "docs-fn-troubleshooting"]
+      "items": ["docs-fn-models", "docs-fn-plugins", "docs-fn-phone", "docs-fn-troubleshooting"]
     },
     {
       "title": "插件开发",
@@ -28,7 +28,7 @@
     },
     {
       "title": "架构",
-      "items": ["docs-fn-cordis-preview", "docs-fn-plugins-preview"]
+      "items": ["docs-fn-architecture", "docs-fn-widgets"]
     }
   ]
 }
