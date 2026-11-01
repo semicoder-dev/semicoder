@@ -8,11 +8,13 @@ date: "2026-11-01"
 
 ## macOS 安装
 
-Fn 0.8.0（build 16）面向 macOS 14+、Apple Silicon。下载完整安装包，打开 DMG，将 **Fn.app** 拖入 Applications，再从「应用程序」启动。
+Fn 0.8.1（build 17）面向 macOS 14+、Apple Silicon。下载完整安装包，打开 DMG，将 **Fn.app** 拖入 Applications，再从「应用程序」启动。
 
-[下载 Fn 0.8.0](https://github.com/semicoder-dev/fn/releases/download/v0.8.0/Fn-0.8.0-16-mac-arm64.dmg) · [发行说明与校验文件](https://github.com/semicoder-dev/fn/releases/tag/v0.8.0)
+[下载 Fn 0.8.1](https://github.com/semicoder-dev/fn/releases/download/v0.8.1/Fn-0.8.1-17-mac-arm64.dmg) · [发行说明与校验文件](https://github.com/semicoder-dev/fn/releases/tag/v0.8.1)
 
 已有用户先用完整 DMG 更新 Fn，再到「应用 → 检查更新」更新官方应用。当前看板为 0.3.1，翻译、笔记和模型目录为 0.3.0。旧契约应用会提示需要更新，原笔记、看板和模型目录缓存保留。已使用 Fn 0.8 的用户只需更新看板，即可获得异常边框修复，无需重新安装 Fn。
+
+Fn 0.8.1 优化应用中心固定标题栏、标题栏操作按钮和来源表单，修复宿主确认弹窗间距及初始焦点。使用完整 DMG 更新，已有应用、模型连接、业务数据、摘要与偏好保留，无需重新安装独立应用。独立应用市场与开发包版本不随本次桌面补丁改变。
 
 安装包内置 Bun，使用 Fn 无需自行安装开发工具。桌面正式版暂不提供手机连接。
 
