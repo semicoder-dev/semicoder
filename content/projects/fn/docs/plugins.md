@@ -8,7 +8,9 @@ date: "2026-11-01"
 
 点击底部 Dock 的「应用」或顶部「添加应用」，以弹窗打开应用中心，管理官方市场、自定义市场和本地 `.fn.tgz` 包。市场使用 JSON schema 1，记录应用 ID、版本、名称、说明、归档地址和 SHA-256。自定义源必须为 HTTPS；开发实例允许 loopback HTTP。
 
-默认官方源为 `https://semicoder-dev.github.io/fn-plugins/applications.json`。官方市场提供翻译、笔记、看板和模型目录 0.3.0。远端归档来自固定 GitHub Release，宿主逐跳校验下载地址并核对 SHA-256。本地开发可运行 `bun run market:local` 验证应用。
+默认官方源为 `https://semicoder-dev.github.io/fn-plugins/applications.json`。官方市场提供看板 0.3.1，以及翻译、笔记和模型目录 0.3.0。远端归档来自固定 GitHub Release，宿主逐跳校验下载地址并核对 SHA-256。本地开发可运行 `bun run market:local` 验证应用。
+
+[看板 0.3.1](https://github.com/semicoder-dev/fn-plugins/releases/tag/kanban-v0.3.1) 修复卡片标题、标签色条和看板入口的重复边框及多余空白，并保留键盘焦点提示。使用 Fn UI 0.2.1 构建，包含输入框和按钮的单层焦点边框修复。已安装看板 0.3.0 的用户点击「检查更新」，再更新看板即可；无需重新下载 Fn，看板、卡片和标签数据保留。
 
 「模型目录」通过 models.dev API 查阅模型规格及供应商价格，不需要 API Key，也不会增加可调用的模型连接。详情见[模型与连接](/fn/docs/models)。这批应用要求 Fn 0.8 的 hostApi 2。先更新 Fn，再点击「检查更新」并逐个更新应用；原应用身份及业务数据保留。旧包在新宿主保留管理入口，更新后才能打开。
 
