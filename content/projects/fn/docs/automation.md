@@ -13,6 +13,10 @@ fn call platform.command --json '{"action":"state"}'
 fn call platform.command --json '{"action":"open","input":{"instanceId":"fn-notes"}}'
 fn call platform.command --json '{"action":"close","input":{"instanceId":"fn-notes"}}'
 fn plugin dev . --browser
+fn plugin summary summary/initial.json
+fn plugin summary summary/initial.json --preview --url
 ```
 
 关闭有活动任务时返回 busy；明确允许丢弃任务时才传 force:true。不要自动重放 execution_unknown、interrupted 或 failed 的写任务。CLI 启动不需要展示桌面窗口。
+
+摘要命令提供校验和实际应用行预览，文件修改后自动刷新；旧 widget 命令不再提供。

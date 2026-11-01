@@ -8,7 +8,7 @@ date: "2026-10-31"
 
 # Fn 应用开发
 
-需要 Bun 1.4.4 和 Fn 0.7。`fn plugin init` 创建的项目精确使用 SDK 0.6.0 与 Fn UI 0.1.0，从 npm 安装即可；应用可以在 workspace 外开发。
+需要 Bun 1.4.4 和 Fn 0.8。`fn plugin init` 创建的项目精确使用 SDK 0.7.0 与 Fn UI 0.2.0，从 npm 安装即可；应用可以在 workspace 外开发。
 
 ```sh
 fn plugin init my-app
@@ -33,21 +33,21 @@ fn plugin pack .
   "manifestVersion": 1,
   "id": "my-app",
   "version": "0.1.0",
-  "hostApi": 1,
+  "hostApi": 2,
   "name": { "key": "app.name" },
   "entries": { "backend": "src/backend.ts", "page": "src/page.tsx" },
   "locales": {
     "default": "en",
     "messages": { "en": "locales/en.json", "zh-CN": "locales/zh-CN.json" }
   },
-  "uses": ["models.responses", "widgets.publish"],
+  "uses": ["models.responses", "application.summary"],
   "contributes": {
-    "widgets": [{ "id": "summary", "size": "1x1", "initial": "widgets/summary.json" }]
+    "summary": { "initial": "summary/initial.json" }
   }
 }
 ```
 
-可选 `description`、包内 `icon`；可选 `contributes.chat: {id,name}` 需要后台和 `chat.receive`。能力为 `models.responses / widgets.publish / chat.receive`。声明和调用均接受 Zod 校验。
+可选 `description`、包内 `icon`；可选 `contributes.chat: {id,name}` 需要后台和 `chat.receive`。能力为 `models.responses / application.summary / chat.receive`。声明和调用均接受 Zod 校验。
 
 ## 类型化契约
 
@@ -94,7 +94,7 @@ export default defineBackend({
 });
 ```
 
-`host.paths.data/cache/logs` 是应用专属目录。后台可使用 Bun SQLite 或文件。`host.widgets.publish(id, snapshot)` 发布完整快照。`host.ui.toast(text, {viewId})` 定向到发起视图；没有视图时进入宿主通知。`host.ui.confirm(text, {viewId})` 需要活跃视图，视图关闭后取消。
+`host.paths.data/cache/logs` 是应用专属目录。后台可使用 Bun SQLite 或文件。`host.application.summary(id, snapshot)` 发布完整快照。`host.ui.toast(text, {viewId})` 定向到发起视图；没有视图时进入宿主通知。`host.ui.confirm(text, {viewId})` 需要活跃视图，视图关闭后取消。
 
 手机功能仅在开发构建中开放。聊天通过 setup 返回 `chat: { [manifestChatId]: async ({message, signal, reply}) => { ...; await reply.complete({text}); } }`。`reply.complete` 将最终文本写入宿主 outbox。手机消息不带页面视图，不能等待视图弹窗。
 
@@ -131,6 +131,6 @@ createRoot(document.getElementById("root")!).render(
 
 ## 归档
 
-`.fn-build/` 包含后台 TypeScript、冻结的运行依赖、构建页面、词条和小组件资源；`<id>-<version>.fn.tgz` 为发行归档。宿主安装不执行 bun install 或依赖脚本。前端不引用 workspace 外路径；构建器拒绝未冻结依赖。运行代码不得写入安装目录。
+`.fn-build/` 包含后台 TypeScript、冻结的运行依赖、构建页面、词条和摘要资源；`<id>-<version>.fn.tgz` 为发行归档。宿主安装不执行 bun install 或依赖脚本。前端不引用 workspace 外路径；构建器拒绝未冻结依赖。运行代码不得写入安装目录。
 
-[小组件](/fn/docs/widgets) · [安装更新](/fn/docs/plugins) · [FIA 联调](/fia/docs/development)
+[应用摘要](/fn/docs/application-summaries) · [安装更新](/fn/docs/plugins) · [FIA 联调](/fia/docs/development)

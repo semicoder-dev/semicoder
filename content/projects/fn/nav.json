@@ -28,7 +28,7 @@
     },
     {
       "title": "架构",
-      "items": ["docs-fn-architecture", "docs-fn-widgets"]
+      "items": ["docs-fn-architecture", "docs-fn-application-summaries"]
     }
   ]
 }

@@ -14,7 +14,7 @@ start: { "label": "下载安装", "doc": "docs-fn-installation" }
 
 ## 一个桌面，多个独立应用
 
-Fn 用卡片展示应用状态，点击打开独立窗口。打开启动、最小化继续、关闭停止；状态栏也能快速进入应用。宿主统一管理模型、公共 UI、小组件和应用更新，应用专注业务。
+Fn 用列表展示每个已安装应用的状态与动态摘要，点击打开独立窗口。打开启动、最小化继续、关闭停止；状态栏也能快速进入应用。宿主统一管理模型、公共 UI、应用摘要和应用更新，应用专注业务。
 
 ## 翻译、笔记、看板与模型目录
 
@@ -24,6 +24,8 @@ Fn 用卡片展示应用状态，点击打开独立窗口。打开启动、最�
 
 ## TypeScript 应用开发
 
-前后端优先使用 TypeScript，后台运行内置 Bun。SDK 提供类型化方法、流式调用、模型、UI、窗口与 JSON 小组件。浏览器调试使用同一真实宿主。
+前后端优先使用 TypeScript，后台运行内置 Bun。SDK 提供类型化方法、流式调用、模型、UI、窗口与 结构化动态摘要。浏览器调试使用同一真实宿主。
 
-Fn 0.7 提供 macOS Apple Silicon 安装包；开发使用 SDK 0.6.0 与 Fn UI 0.1.0。阅读[下载安装](/fn/docs/installation)、[应用开发](/fn/docs/plugin-development)与[平台架构](/fn/docs/architecture)。
+Fn 0.8 提供 macOS Apple Silicon 安装包；开发使用 SDK 0.7.0 与 Fn UI 0.2.0。阅读[下载安装](/fn/docs/installation)、[应用开发](/fn/docs/plugin-development)与[平台架构](/fn/docs/architecture)。
+
+每个应用自动显示一行，支持搜索、拖动和键盘排序，窄窗口自动调整摘要区域。详见[应用列表与摘要](/fn/docs/application-summaries)。

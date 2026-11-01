@@ -8,9 +8,11 @@ date: "2026-11-01"
 
 ## macOS 安装
 
-Fn 0.7.0（build 15）面向 macOS 14+、Apple Silicon。下载完整安装包，打开 DMG，将 **Fn.app** 拖入 Applications，再从「应用程序」启动。
+Fn 0.8.0（build 16）面向 macOS 14+、Apple Silicon。下载完整安装包，打开 DMG，将 **Fn.app** 拖入 Applications，再从「应用程序」启动。
 
-[下载 Fn 0.7.0](https://github.com/semicoder-dev/fn/releases/download/v0.7.0/Fn-0.7.0-15-mac-arm64.dmg) · [发行说明与校验文件](https://github.com/semicoder-dev/fn/releases/tag/v0.7.0)
+[下载 Fn 0.8.0](https://github.com/semicoder-dev/fn/releases/download/v0.8.0/Fn-0.8.0-16-mac-arm64.dmg) · [发行说明与校验文件](https://github.com/semicoder-dev/fn/releases/tag/v0.8.0)
+
+已有用户先用完整 DMG 更新 Fn，再到「应用 → 检查更新」将官方应用更新到 0.3.0。旧契约应用会提示需要更新，原笔记、看板和模型目录缓存保留。
 
 安装包内置 Bun，使用 Fn 无需自行安装开发工具。桌面正式版暂不提供手机连接。
 
@@ -18,7 +20,7 @@ Fn 0.7.0（build 15）面向 macOS 14+、Apple Silicon。下载完整安装包�
 
 点击底部 Dock 的「应用」，从官方市场安装翻译、笔记、看板和模型目录。也可添加自定义 HTTPS 市场或通过「本地安装」选择 `.fn.tgz`。
 
-安装后从桌面卡片打开应用。笔记与看板可直接使用，模型目录联网查询无需 API Key；翻译需在「设置 → 模型」登录 ChatGPT 并选择默认模型。
+安装后从首页应用行打开应用。笔记与看板可直接使用，模型目录联网查询无需 API Key；翻译需在「设置 → 模型」登录 ChatGPT 并选择默认模型。
 
 ## 源码开发
 
