@@ -3,14 +3,14 @@ id: "docs-fn-plugins"
 slug: "plugins"
 title: "应用管理"
 description: "安装、更新、生命周期与数据。"
-date: "2026-10-31"
+date: "2026-11-01"
 ---
 
 点击底部 Dock 的「应用」或顶部「添加应用」，以弹窗打开应用中心，管理官方市场、自定义市场和本地 `.fn.tgz` 包。市场使用 JSON schema 1，记录应用 ID、版本、名称、说明、归档地址和 SHA-256。自定义源必须为 HTTPS；开发实例允许 loopback HTTP。
 
-默认官方源为 `https://semicoder-dev.github.io/fn-plugins/applications.json`。官方市场提供翻译、笔记、看板与模型目录 0.2.0。远端归档来自固定 GitHub Release，宿主逐跳校验下载地址并核对 SHA-256。本地开发可运行 `bun run market:local` 验证应用。
+默认官方源为 `https://semicoder-dev.github.io/fn-plugins/applications.json`。官方市场提供翻译、笔记、看板 0.2.0 和模型目录 0.2.1。远端归档来自固定 GitHub Release，宿主逐跳校验下载地址并核对 SHA-256。本地开发可运行 `bun run market:local` 验证应用。
 
-「模型目录」通过 models.dev API 查阅模型规格及供应商价格，不需要 API Key，也不会增加可调用的模型连接。详情见[模型与连接](/fn/docs/models)。已有 Fn 0.7 用户刷新官方市场即可安装；原有三个应用的归档与数据保持不变。
+「模型目录」通过 models.dev API 查阅模型规格及供应商价格，不需要 API Key，也不会增加可调用的模型连接。详情见[模型与连接](/fn/docs/models)。已有 Fn 0.7 用户刷新官方市场即可安装；已有模型目录 0.2.0 用户点击「检查更新」，再点击该应用的「更新」，即可获得固定顶部和分页的布局；缓存与应用数据保留。原有三个应用的归档与数据保持不变。
 
 下载后先校验，再切换不可变代码目录。更新运行中的应用时需要确认关闭，活动任务会中断；更新完成可重新打开。其他应用继续运行。浏览器旧视图失效，重载后绑定新运行代。
 
