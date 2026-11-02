@@ -2,13 +2,13 @@
 id: "docs-fn-application-summaries"
 slug: "application-summaries"
 title: "应用列表与摘要"
-description: "每个应用一行，固定区域中的动态摘要。适用于 Fn 0.8、SDK 0.7 / UI 0.2 的 hostApi 2。"
-date: "2026-11-01"
+description: "每个应用一行，固定区域中的动态摘要。适用于 Fn 0.8、SDK 0.8 / UI 0.2 的 hostApi 2。"
+date: "2026-11-02"
 ---
 
 # 应用列表与动态摘要
 
-本文对应 Fn 0.8、SDK 0.7.1、UI 0.2.1 的 hostApi 2。应用通过结构化摘要提供首页内容，宿主统一渲染。
+本文对应 Fn 0.8、SDK 0.8.0、UI 0.2.2 的 hostApi 2。应用通过结构化摘要提供首页内容，宿主统一渲染。
 
 ## 首页
 
@@ -60,6 +60,6 @@ fn plugin summary summary/initial.json
 fn plugin summary summary/initial.json --preview
 ```
 
-预览复用实际应用行，支持明暗、语言、运行状态和文件变更刷新。正式应用精确依赖公开 SDK 0.7.1 / UI 0.2.1，发布前在仓库外检查与打包。开发联调可以使用带哈希的本地归档，发行时必须恢复公开依赖。
+预览复用实际应用行，支持明暗、语言、运行状态和文件变更刷新。正式应用精确依赖公开 SDK 0.8.0 / UI 0.2.2，发布前在仓库外检查与打包。开发联调可以使用带哈希的本地归档，发行时必须恢复公开依赖。
 
 旧小组件 API、布局字段及预览命令不保留兼容。旧应用包可管理但不能启动，需安装按新 SDK 重建的应用。先更新 Fn，再在应用中心更新应用；更新保留业务数据。

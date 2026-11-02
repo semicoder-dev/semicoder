@@ -3,17 +3,17 @@ id: "docs-fn-plugin-development"
 slug: "plugin-development"
 title: "应用开发"
 description: "独立 TypeScript 页面与 Bun 后台。"
-date: "2026-10-31"
+date: "2026-11-02"
 ---
 
 # Fn 应用开发
 
-需要 Bun 1.4.4 和 Fn 0.8。当前开发包为 SDK 0.7.1 与 Fn UI 0.2.1，应用可以在 workspace 外开发。Fn 0.8.1 内置的 init 模板使用这两个精确版本；已有项目也可通过以下命令显式安装。
+需要 Bun 1.4.4 和 Fn 0.8.4。当前开发包为 SDK 0.8.0 与 Fn UI 0.2.2，应用可以在 workspace 外开发。Fn 0.8.4 内置的 init 模板使用这两个精确版本；已有项目也可通过以下命令显式安装。
 
 ```sh
 fn plugin init my-app
 cd my-app
-bun add --exact @semicoder/fn-sdk@0.7.1 @semicoder/fn-ui@0.2.1
+bun add --exact @semicoder/fn-sdk@0.8.0 @semicoder/fn-ui@0.2.2
 fn plugin check .
 fn plugin dev . --browser
 fn plugin build .
@@ -76,13 +76,13 @@ export default defineBackend({
             {
               model: model.id,
               instructions: "Translate the user's text into English.",
-              input: [{ role: "user", content: [{ type: "input_text", text }] }],
+              input: [{ type: "message", role: "user", content: [{ type: "input_text", text }] }],
               stream: true,
               store: false,
             },
             { connectionId: model.connectionId, signal },
           )) {
-            if (event.type === "response.output_text.delta") yield String(event.delta);
+            if (event.type === "response.output_text.delta") yield event.delta;
           }
         },
       },
@@ -94,7 +94,7 @@ export default defineBackend({
 });
 ```
 
-`host.paths.data/cache/logs` 是应用专属目录。后台可使用 Bun SQLite 或文件。`host.application.summary(id, snapshot)` 发布完整快照。`host.ui.toast(text, {viewId})` 定向到发起视图；没有视图时进入宿主通知。`host.ui.confirm(text, {viewId})` 需要活跃视图，视图关闭后取消。
+`host.paths.data/cache/logs` 是应用专属目录。后台可使用 Bun SQLite 或文件。`host.application.setSummary(snapshot)` 发布完整快照。`host.ui.toast(text, {viewId})` 定向到发起视图；没有视图时进入宿主通知。`host.ui.confirm(text, {viewId})` 需要活跃视图，视图关闭后取消。
 
 手机功能仅在开发构建中开放。聊天通过 setup 返回 `chat: { [manifestChatId]: async ({message, signal, reply}) => { ...; await reply.complete({text}); } }`。`reply.complete` 将最终文本写入宿主 outbox。手机消息不带页面视图，不能等待视图弹窗。
 

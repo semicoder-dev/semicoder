@@ -3,7 +3,7 @@ id: "docs-fn-architecture"
 slug: "architecture"
 title: "平台架构"
 description: "FIA、宿主、SDK、应用与手机的职责。"
-date: "2026-10-31"
+date: "2026-11-02"
 ---
 
 FIA 维护 Bun 工具链、本机网关、浏览器授权、原生窗口、动态状态栏、进程组和 CloudKit 传输。Fn 维护应用平台、模型、桌面、应用摘要、公共 UI 和消息路由。应用拥有业务、数据和 Agent loop；手机是文字入口。
@@ -34,7 +34,9 @@ FIA 负责浏览器/原生会话；Fn 的调用身份绑定应用实例、随机
 
 宿主实现官方 ChatGPT PKCE 登录、OIDC 身份验证、动态客户端注册、账号目录、原子凭证刷新和撤销。凭证文件权限为 0600。应用只得到连接 ID 和账号可用模型目录。
 
-公开请求和事件使用 OpenResponses；连接 ID、身份与 AbortSignal 在调用上下文中。请求必须显式提供完整 input 数组，`store:false`、`stream:true`。不支持的参数直接报错；成功必须收到 `response.completed`，失败、未完成、额度和流中断分别处理。应用负责工具结果和下一次请求。
+模型请求与事件以 OpenResponses 为基础；连接 ID、身份与 AbortSignal 在调用上下文中。Fn 当前连接要求显式提供完整 input 数组，`store:false`、`stream:true`，这不是全协议的限制。已列入连接禁用清单的参数直接报错；SDK 以收到 `response.completed` 判断成功，失败、未完成、额度和流中断分别处理。应用负责工具结果和下一次请求。
+
+SDK 0.8.0 提供固定 OpenResponses 请求、资源和 24 种具体事件类型，SDK 与宿主共用嵌套请求校验，事件流验证资源、序号和终态。完整协议与当前连接能力边界见[模型与账号](/fn/docs/models)。
 
 来源：[OpenResponses](https://www.openresponses.org/specification)、[官方授权](https://developers.openai.com/siwc/token-sharing-open-source/sign-in)、[模型与调用](https://developers.openai.com/siwc/token-sharing-open-source/models-and-inference)。
 

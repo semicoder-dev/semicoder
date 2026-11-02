@@ -3,7 +3,7 @@ id: "docs-fn-plugin-ui"
 slug: "plugin-ui"
 title: "标准 UI"
 description: "Fn UI 与宿主主题语言。"
-date: "2026-10-31"
+date: "2026-11-02"
 ---
 
 页面使用自有 `@semicoder/fn-ui`，包括 Button、Input、Textarea、Select、Checkbox、Menu、Modal、Toast、Notice、Surface、图标和布局。通过 ApplicationProvider 统一主题、语言和公共弹窗。
@@ -23,4 +23,4 @@ date: "2026-10-31"
 
 组件尺寸和交互由 Fn UI 维护，宿主布局由自身 CSS Modules 管理。配色映射不需要 dsh 运行依赖；应用自包含打包 Fn UI，更新主题后应重新构建应用包。
 
-UI 0.2.1 中，Input、Textarea、Button 和 Select 复用原边框显示焦点；菜单项和无边框弹窗关闭按钮使用内部细线。鼠标与键盘焦点保持可辨识，控件尺寸不随聚焦变化。
+UI 0.2.2 中，Input、Textarea、Button 和 Select 复用原边框显示焦点；菜单项和无边框弹窗关闭按钮使用内部细线。鼠标与键盘焦点保持可辨识，控件尺寸不随聚焦变化。
