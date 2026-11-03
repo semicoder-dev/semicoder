@@ -3,12 +3,12 @@ id: "docs-fn-plugin-development"
 slug: "plugin-development"
 title: "应用开发"
 description: "独立 TypeScript 页面与 Bun 后台。"
-date: "2026-11-02"
+date: "2026-11-03"
 ---
 
 # Fn 应用开发
 
-需要 Bun 1.4.4 和 Fn 0.8.4。当前开发包为 SDK 0.8.0 与 Fn UI 0.2.2，应用可以在 workspace 外开发。Fn 0.8.4 内置的 init 模板使用这两个精确版本；已有项目也可通过以下命令显式安装。
+需要 Bun 1.4.4，推荐使用 Fn 0.8.5；SDK 0.8.0 的严格模型协议最低已验证宿主仍为 0.8.4。当前开发包保持 SDK 0.8.0 与 Fn UI 0.2.2，应用可以在 workspace 外开发。Fn 0.8.5 内置的 init 模板仍使用这两个精确版本；已有项目也可通过以下命令显式安装。
 
 ```sh
 fn plugin init my-app

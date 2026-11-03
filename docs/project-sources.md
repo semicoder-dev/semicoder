@@ -1,5 +1,19 @@
 # 项目资料与发布状态
 
+## 2026-11-03 Fn 0.8.5 原生菜单与布局修复
+
+Fn **0.8.5/build 21** 已公开，`v0.8.5` 固定 `7736dce5a45e5bd94e169fb63c6b3918e15d806a`。[签名候选 41488180080](https://github.com/semicoder-dev/fn/actions/runs/41488180080) attempt 3、artifact `13192008893` 通过 13 项门禁，覆盖新装和三条真实旧版完整安装路径；[正式流程 41553571685](https://github.com/semicoder-dev/fn/actions/runs/41553571685) 提升同一产物且整体成功，真实公网报告为 `mode=public`、`originalAppsVerified=true`、精确 target build 21，9 项通过。
+
+正式 DMG 为 [Fn-0.8.5-21-mac-arm64.dmg](https://github.com/semicoder-dev/fn/releases/download/v0.8.5/Fn-0.8.5-21-mac-arm64.dmg)，45,846,716 字节，SHA-256 `8f568cee79f078918c24c2bb20e621888a9240239e8806ce3f98daa5901fda85`。11 个 Release 附件、12 个 Pages 更新文件与 live latest 共 24 项已在工作流外匿名逐字节及独立 SHA-256/Ed25519 核对，与候选一致；宿主官方 verify-public 的 release/active 校验通过。下载入口在这些公开门禁完成后才从 0.8.4 切换，未把候选或推测地址充当正式产物。
+
+Fn `93aecd1` 的 `frontend/desktop.module.css` 将 `.topbar`/`.main` 外壳统一为最大 1200px、水平居中；`974cd70` 的共仓 `framework/fia/Sources/FIA/FIAApplication.swift` 调整 `installStatusItem`，正式状态栏「显示桌面」第一项，分割线后为常用应用，应用与系统操作、退出仍分组，空列表无连续分割线。该变化属于真实 Swift Host 输入，不是纯重编漂移；0.8.4 及更早版本升级本版须完整安装包替换，保留现有业务、配置和数据，不能仅发布旧固定运行时的代码更新。
+
+共仓 FIA `packages/cli/src/application.ts` 的 `isDevelopmentServerReady` 使用显式禁用代理的本机请求，针对 Bun 1.4.4 的 readiness 修复不改变业务 API 或外网代理。对应 `tests/development.test.ts` 覆盖代理未命中、本机状态、超时、流式响应和环境不变；此前网关直连与此次 readiness 修复分别记录。SDK **0.8.0**、UI **0.2.2**、翻译 **0.3.1**、其余独立应用、手机和 FIA 独立 npm **0.18.0** 不改版。应用开发页只更新推荐宿主与保持原版本的 init 模板说明，不改 SDK/API/清单/市场教程契约。
+
+新 runtimeId 为 `8287e13203e92ef6f6aa6f2bdb3b41f1ddba0fa2357d7b5e20eeff88911afb1a`。使用生产签名配置，从正式公开包 capture 核对来源提交、候选报告、签名、公证、Gatekeeper、固定 JS 与权限后登记 0.8.5 基线；新锁 SHA-256 `7a0ad3deba97ed0e8d203744ec6b0145fed2264acb6572750bb57a431bab2891`。原生输入检查、project/temporary 两份独立空缓存代码复用均通过，runtimeId 一致；新基线及默认 code 恢复已随源项目 `3b2b580a9daf261fd977edf04e637ad6f2f6e9f1` 快进并推送 main，[主干 CI 41554530579](https://github.com/semicoder-dev/fn/actions/runs/41554530579) 成功；公开标签仍固定原 `7736dce` 和候选 artifact，未重建或改写。
+
+官网在 `codex/fn-085-release` 本地同步默认下载、项目首页、第一次使用、排查、应用开发与 FIA 开发/分发。准备阶段的 check、51 单元/175 断言、12 Workers、35 篇内容、生产构建及 41 静态页面检查已通过；最终正式内容的重新验证见[官网同步与 QA](releases/2026-11-03-fn-085-preparation.md)。初轮预渲染的本机 Miniflare registry 权限问题使用受支持的项目内临时路径解决，未改源码、工具链或发布门禁。网站尚未提交、推送、部署，未新增原生菜单截图、真实模型或手机验收结论；后续两环境独立正文与安装入口验证单独登记。以下保留此前公开发行证据。
+
 ## 2026-11-02 Fn 0.8.4 模型协议联合发行
 
 Fn **0.8.4/build 20** 固定 `1b1acd41594bfecb14500e086ed587c4b589cfa8`，签名候选 [41391634518](https://github.com/semicoder-dev/fn/actions/runs/41391634518)、artifact `13118281191` 的15项升级/故障恢复门禁通过。通过提升脚本绑定同一产物进入 [正式流程 41397270151](https://github.com/semicoder-dev/fn/actions/runs/41397270151)，没有重建或重签。DMG 45,845,896字节，SHA-256 `c2efe4ae519f18e96c3612b486d28f7b50c2177626d90ef92d9ab1225cedc6e9`。12个附件、12个更新文件及 live latest 已在流程外匿名逐项核对，与候选一致。仍使用0.8.3固定运行时和 code 策略；0.8.3可应用内更新，0.8.2及更早版本需一次完整安装，数据保留。
