@@ -12,7 +12,7 @@ Fn `93aecd1` 的 `frontend/desktop.module.css` 将 `.topbar`/`.main` 外壳统�
 
 新 runtimeId 为 `8287e13203e92ef6f6aa6f2bdb3b41f1ddba0fa2357d7b5e20eeff88911afb1a`。使用生产签名配置，从正式公开包 capture 核对来源提交、候选报告、签名、公证、Gatekeeper、固定 JS 与权限后登记 0.8.5 基线；新锁 SHA-256 `7a0ad3deba97ed0e8d203744ec6b0145fed2264acb6572750bb57a431bab2891`。原生输入检查、project/temporary 两份独立空缓存代码复用均通过，runtimeId 一致；新基线及默认 code 恢复已随源项目 `3b2b580a9daf261fd977edf04e637ad6f2f6e9f1` 快进并推送 main，[主干 CI 41554530579](https://github.com/semicoder-dev/fn/actions/runs/41554530579) 成功；公开标签仍固定原 `7736dce` 和候选 artifact，未重建或改写。
 
-官网在 `codex/fn-085-release` 本地同步默认下载、项目首页、第一次使用、排查、应用开发与 FIA 开发/分发。准备阶段的 check、51 单元/175 断言、12 Workers、35 篇内容、生产构建及 41 静态页面检查已通过；最终正式内容的重新验证见[官网同步与 QA](releases/2026-11-03-fn-085-preparation.md)。初轮预渲染的本机 Miniflare registry 权限问题使用受支持的项目内临时路径解决，未改源码、工具链或发布门禁。网站尚未提交、推送、部署，未新增原生菜单截图、真实模型或手机验收结论；后续两环境独立正文与安装入口验证单独登记。以下保留此前公开发行证据。
+官网在 `codex/fn-085-release` 本地同步默认下载、项目首页、第一次使用、排查、应用开发与 FIA 开发/分发。准备阶段的 check、51 单元/175 断言、12 Workers、35 篇内容、生产构建及 41 静态页面检查已通过；最终正式内容的重新验证见[官网同步与 QA](releases/2026-11-03-fn-085-preparation.md)。初轮预渲染的本机 Miniflare registry 权限问题使用受支持的项目内临时路径解决，未改源码、工具链或发布门禁。官网同步已随本站 `1ccb5431aff61aebd44b28eb3cb5894dad3b9a54` 提交并推送 main，工作流 [41555914459](https://github.com/semicoder-dev/semicoder/actions/runs/41555914459) 完成 quality、staging 与生产部署，生产环境按本次明确授权批准。工作流外对 `https://staging.semicoder.dev` 与 `https://semicoder.dev` 分别执行全站 strict smoke（41 公开路径、RSS/sitemap/healthz、404、安全头、认证/后台缓存隔离、生产 www 跳转）及对照精确提交构建快照的 24 篇 Fn/FIA 完整正文/链接逐字节比较，全部通过；浏览器复核安装页精确 DMG 链接返回 200 且字节大小一致。未新增原生菜单截图、真实模型或手机验收结论。以下保留此前公开发行证据。
 
 ## 2026-11-02 Fn 0.8.4 模型协议联合发行
 

@@ -5,7 +5,7 @@
 - 日期：2026-11-03。本站基线 `f09396f`，本地分支 `codex/fn-085-release`；开始时工作树干净，目标分支不存在后创建，未覆盖分支。
 - 准备阶段保留公开 0.8.4 默认入口；在源项目确认 0.8.5 正式公开产物、旧版完整安装和公网门禁通过后，按追加指令切换本地默认入口与正式正文，不再保留本版候选预告。
 - Fn 0.8.5/build 21 已公开，源项目固定 `7736dce5a45e5bd94e169fb63c6b3918e15d806a`。签名候选 [41488180080](https://github.com/semicoder-dev/fn/actions/runs/41488180080) attempt 3 / artifact `13192008893` 的 13 项门禁通过，正式流程 [41553571685](https://github.com/semicoder-dev/fn/actions/runs/41553571685) 提升同一产物，真实公网报告 9 项通过，精确 target build 21、`mode=public`、`originalAppsVerified=true`。
-- 本子任务仍不提交、合并、推送、部署、审批生产、修改远端保护或替换日常应用；不执行浏览器操作。官网源码同步、本地 QA、两环境部署与独立线上核验分别记录。
+- 子代理准备阶段不提交、合并、推送、部署、审批生产或修改远端保护；下方“部署与线上验收结果”由父任务按本次明确授权完成。官网源码同步、本地 QA、两环境部署与独立线上核验分别记录。
 - SDK 0.8.0 / UI 0.2.2、翻译 0.3.1、其余独立应用、手机及 FIA npm 0.18.0 不改版。独立应用无需因本次宿主修复重装。
 
 ## 正式产物与基线证据
@@ -45,7 +45,7 @@
 | `bun run check`                                              | 通过：lint 0 warning/error、format、strict TS、35 篇内容、文档链接与生成一致性                                                             |
 | `bun run build` / `bun run build:check`                      | 通过：正式内容 2431 客户端/3199 SSR 模块，42 页预渲染（含 `/admin`），41 公开页面/Home 导航/锚点/草稿隔离/项目搜索                         |
 | 源码及实际 HTML 正式边界断言                                 | 通过：7 页源码/HTML 无本版未公开预告；精确 0.8.5 链接/大小/哈希、完整安装/数据保留/版本不变；24 正文可提取；0.8.4 及更早历史来源逐字节不变 |
-| 工作流外 staging / production smoke 与 24 篇 Fn/FIA 正文比对 | 本子任务未执行，待父任务最终源码提交与部署后完成                                                                                           |
+| 工作流外 staging / production smoke 与 24 篇 Fn/FIA 正文比对 | 通过：部署后两环境各自 41 公开路径、RSS/sitemap/healthz、404、安全头、认证/后台缓存隔离与生产 www 跳转通过；对照提交 `1ccb543` 构建快照逐篇比对 24 篇完整 article 正文、canonical 与标题，逐项 SHA-256 一致 |
 
 ### 受限本机构建方式
 
@@ -60,9 +60,9 @@ MINIFLARE_REGISTRY_PATH="$PWD/.wrangler/qa-registry" \
 bun run build && bun run build:check
 ```
 
-## 交接后仍需完成
+## 部署与线上验收结果
 
-1. 源项目 main `3b2b580`、远端 CI、新锁及默认 code 恢复已核对；继续保留公开标签及候选原始产物，不重建或重签。
-2. 父任务审核本站最终 diff、验证后提交/合入/推送；现有官网工作流依次执行质量、staging、production 和已获本次授权的生产审核，其他保护不变。
-3. 在 `https://staging.semicoder.dev` 与 `https://semicoder.dev` 各自完成工作流外全站 smoke，并对照精确最终官网提交的构建快照逐篇核对 24 个 Fn/FIA article 正文与链接。不能只凭部署 job 成功关闭官网交付，也不能使用准备阶段的 0.8.4 默认快照。
-4. 网站线上正文、下载入口、搜索与两环境部署结果完成后另行登记；未实际执行的登录、生产数据、手机或原生截图不声明通过。
+1. 源项目 main `3b2b580`、[远端 CI 41554530579](https://github.com/semicoder-dev/fn/actions/runs/41554530579)、新锁及默认 code 恢复已核对；公开标签 `v0.8.5` 及候选原始产物保持 `7736dce`，未重建或重签。
+2. 本站最终内容 `1ccb5431aff61aebd44b28eb3cb5894dad3b9a54` 已提交、快进合入 main 并推送；[工作流 41555914459](https://github.com/semicoder-dev/semicoder/actions/runs/41555914459) 的 Quality checks、Deploy staging、Deploy production 全部成功。生产部署按本次明确授权经既有 environment 审核批准，其他保护未改。
+3. 已在 `https://staging.semicoder.dev` 与 `https://semicoder.dev` 分别完成工作流外全站 strict smoke，并对照精确提交的构建快照逐篇核对 24 个 Fn/FIA article 完整正文、canonical 与标题，全部逐字节一致；浏览器复核安装页精确 DMG 链接返回 200、`content-length` 45,846,716。
+4. 线上正文、下载入口与两环境部署结果已登记到 [项目资料](../project-sources.md) 与[内容发布](../content.md)。未实际执行的登录、生产数据写入、手机或原生菜单截图不声明通过。
